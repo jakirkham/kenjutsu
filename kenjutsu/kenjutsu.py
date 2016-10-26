@@ -22,7 +22,10 @@ __author__ = "John Kirkham <kirkhamj@janelia.hhmi.org>"
 __date__ = "$Sep 08, 2016 15:46:46 EDT$"
 
 
+import itertools
+import operator
 import math
+import warnings
 
 
 def reformat_slice(a_slice, a_length=None):
@@ -391,9 +394,9 @@ def blocks_split(space_shape, block_shape, block_halo=None):
             a warning, which can be converted to an exception, if needed.
 
         Args:
-            space_shape(numpy.ndarray):    Shape of array to slice
-            block_shape(numpy.ndarray):    Size of each block to take
-            block_halo(numpy.ndarray):     Halo to tack on to each block
+            space_shape(tuple):            Shape of array to slice
+            block_shape(tuple):            Size of each block to take
+            block_halo(tuple):             Halo to tack on to each block
 
         Returns:
             collections.Sequence of \
@@ -566,33 +569,56 @@ def blocks_split(space_shape, block_shape, block_halo=None):
 
     """
 
-    space_shape = numpy.array(space_shape)
-    block_shape = numpy.array(block_shape)
+    try:
+        xrange
+    except NameError:
+        xrange = range
+
+    try:
+        from itertools import ifilter
+        from itertools import imap
+        from itertools import izip
+    except ImportError:
+        ifilter = filter
+        imap = map
+        izip = zip
 
     if block_halo is not None:
-        block_halo = numpy.array(block_halo)
-
-        assert (space_shape.ndim == block_shape.ndim == block_halo.ndim == 1),\
-            "There should be no more than 1 dimension for " + \
-            "`space_shape`, `block_shape`, and `block_halo`."
         assert (len(space_shape) == len(block_shape) == len(block_halo)), \
             "The dimensions of `space_shape`, `block_shape`, and " + \
             "`block_halo` should be the same."
     else:
-        assert (space_shape.ndim == block_shape.ndim == 1), \
-            "There should be no more than 1 dimension for " + \
-            "`space_shape` and `block_shape`."
         assert (len(space_shape) == len(block_shape)), \
             "The dimensions of `space_shape` and `block_shape` " + \
             "should be the same."
 
-        block_halo = numpy.zeros_like(space_shape)
+        block_halo = tuple()
+        for i in xrange(len(space_shape)):
+            block_halo += (0,)
 
-    uneven_block_division = (space_shape % block_shape != 0)
+    vec_add = lambda a, b: imap(operator.add, a, b)
+    vec_sub = lambda a, b: imap(operator.sub, a, b)
 
-    if uneven_block_division.any():
-        uneven_block_division_str = uneven_block_division.nonzero()[0].tolist()
-        uneven_block_division_str = [str(_) for _ in uneven_block_division_str]
+    vec_mul = lambda a, b: imap(operator.mul, a, b)
+    vec_div = lambda a, b: imap(operator.div, a, b)
+    vec_mod = lambda a, b: imap(operator.mod, a, b)
+
+    vec_nonzero = lambda a: \
+            imap(lambda _: _[0], ifilter(lambda _: _[1], enumerate(a)))
+    vec_str = lambda a: imap(str, a)
+
+    vec_clip_floor = lambda a, a_min: \
+            imap(lambda _: _ if _ >= a_min else a_min, a)
+    vec_clip_ceil = lambda a, a_max: \
+            imap(lambda _: _ if _ <= a_max else a_max, a)
+    vec_clip = lambda a, a_min, a_max: \
+            vec_clip_ceil(vec_clip_floor(a, a_min), a_max)
+
+    uneven_block_division = tuple(vec_mod(space_shape, block_shape))
+
+    if any(uneven_block_division):
+        uneven_block_division_str = vec_nonzero(uneven_block_division)
+        uneven_block_division_str = vec_str(uneven_block_division_str)
         uneven_block_division_str = ", ".join(uneven_block_division_str)
 
         warnings.warn(
@@ -606,42 +632,55 @@ def blocks_split(space_shape, block_shape, block_halo=None):
     haloed_ranges_per_dim = []
     trimmed_halos_per_dim = []
 
-    for each_dim in iters.irange(len(space_shape)):
+    for each_dim in xrange(len(space_shape)):
         # Construct each block using the block size given. Allow to spill over.
         if block_shape[each_dim] == -1:
-            block_shape[each_dim] = space_shape[each_dim]
+            block_shape = (block_shape[:each_dim] +
+                           space_shape[each_dim:each_dim+1] +
+                           block_shape[each_dim+1:])
 
-        a_range = numpy.arange(0, space_shape[each_dim], block_shape[each_dim])
-        a_range = expand_view(a_range, reps_before=2).copy()
-        a_range[1] += block_shape[each_dim]
+        # Generate block ranges.
+        a_range = []
+        for i in xrange(2):
+            offset = i * block_shape[each_dim]
+            this_range = xrange(
+                offset,
+                offset + space_shape[each_dim],
+                block_shape[each_dim]
+            )
+            a_range.append(list(this_range))
 
         # Add the halo to each block on both sides.
-        a_range_haloed = a_range.copy()
-        a_range_haloed[1] += block_halo[each_dim]
-        a_range_haloed[0] -= block_halo[each_dim]
-        a_range_haloed.clip(0, space_shape[each_dim], out=a_range_haloed)
+        a_range_haloed = []
+        for i in xrange(2):
+            sign = 2 * i - 1
+
+            haloed = vec_mul(
+                itertools.repeat(sign, len(a_range[i])),
+                itertools.repeat(block_halo[each_dim], len(a_range[i])),
+            )
+            haloed = vec_add(a_range[i], haloed)
+            haloed = vec_clip(haloed, 0, space_shape[each_dim])
+
+            a_range_haloed.append(list(haloed))
 
         # Compute how to trim the halo off of each block.
         # Clip each block to the boundaries.
-        a_trimmed_halo = numpy.empty_like(a_range)
-        a_trimmed_halo[...] = a_range - a_range_haloed[0]
-        a_range.clip(0, space_shape[each_dim], out=a_range)
-
-        # Transpose to allow for iteration over each block's dimension.
-        a_range = a_range.T.copy()
-        a_range_haloed = a_range_haloed.T.copy()
-        a_trimmed_halo = a_trimmed_halo.T.copy()
+        a_trimmed_halo = []
+        for i in xrange(2):
+            trimmed = vec_sub(a_range[i], a_range_haloed[0])
+            a_trimmed_halo.append(list(trimmed))
+            a_range[i] = list(vec_clip(a_range[i], 0, space_shape[each_dim]))
 
         # Convert all ranges to slices for easier use.
-        a_range = iters.reformat_slices([
-            slice(*a_range[i]) for i in iters.irange(len(a_range))
-        ])
-        a_range_haloed = iters.reformat_slices([
-            slice(*a_range_haloed[i]) for i in iters.irange(len(a_range_haloed))
-        ])
-        a_trimmed_halo = iters.reformat_slices([
-            slice(*a_trimmed_halo[i]) for i in iters.irange(len(a_trimmed_halo))
-        ])
+        a_range = tuple(imap(slice, *a_range))
+        a_range_haloed = tuple(imap(slice, *a_range_haloed))
+        a_trimmed_halo = tuple(imap(slice, *a_trimmed_halo))
+
+        # Format all slices.
+        a_range = reformat_slices(a_range)
+        a_range_haloed = reformat_slices(a_range_haloed)
+        a_trimmed_halo = reformat_slices(a_trimmed_halo)
 
         # Collect all blocks
         ranges_per_dim.append(a_range)
