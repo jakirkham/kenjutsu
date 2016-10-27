@@ -21,8 +21,8 @@ class TestKenjutsu(unittest.TestCase):
         pass
 
 
-    def test_blocks_split(self):
-        blocks = kenjutsu.blocks_split((2,), (1,))
+    def test_split_blocks(self):
+        blocks = kenjutsu.split_blocks((2,), (1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1),), (slice(1, 2, 1),)],
@@ -30,7 +30,7 @@ class TestKenjutsu(unittest.TestCase):
              [(slice(0, 1, 1),), (slice(0, 1, 1),)])
         )
 
-        blocks = kenjutsu.blocks_split((2,), (-1,))
+        blocks = kenjutsu.split_blocks((2,), (-1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 2, 1),)],
@@ -38,7 +38,7 @@ class TestKenjutsu(unittest.TestCase):
              [(slice(0, 2, 1),)])
         )
 
-        blocks = kenjutsu.blocks_split((2, 3,), (1, 1,))
+        blocks = kenjutsu.split_blocks((2, 3,), (1, 1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
@@ -61,7 +61,7 @@ class TestKenjutsu(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = kenjutsu.blocks_split((2, 3,), (1, 1,), (0, 0))
+        blocks = kenjutsu.split_blocks((2, 3,), (1, 1,), (0, 0))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
@@ -84,7 +84,7 @@ class TestKenjutsu(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = kenjutsu.blocks_split((10, 12,), (3, 2,), (4, 3,))
+        blocks = kenjutsu.split_blocks((10, 12,), (3, 2,), (4, 3,))
         self.assertEqual(
             blocks,
             ([(slice(0, 3, 1), slice(0, 2, 1)),

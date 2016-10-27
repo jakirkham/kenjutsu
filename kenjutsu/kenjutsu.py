@@ -379,7 +379,7 @@ def len_slices(slices, lengths=None):
     return(lens)
 
 
-def blocks_split(space_shape, block_shape, block_halo=None):
+def split_blocks(space_shape, block_shape, block_halo=None):
     """
         Return a list of slicings to cut each block out of an array or other.
 
@@ -405,7 +405,7 @@ def blocks_split(space_shape, block_shape, block_halo=None):
 
         Examples:
 
-            >>> blocks_split(
+            >>> split_blocks(
             ...     (2, 3,), (1, 1,), (1, 1,)
             ... )  #doctest: +NORMALIZE_WHITESPACE
             ([(slice(0, 1, 1), slice(0, 1, 1)),
