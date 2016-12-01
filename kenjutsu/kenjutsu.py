@@ -227,23 +227,24 @@ def reformat_slices(slices, lengths=None):
             (slice(0, 10, 1), slice(3, 13, 1), slice(0, 5, 1), slice(0, 20, 2))
     """
 
+    new_slices = slices
     try:
-        len(slices)
+        len(new_slices)
     except TypeError:
-        slices = (slices,)
+        new_slices = (new_slices,)
 
     new_lengths = lengths
     if new_lengths is None:
-        new_lengths = [None] * len(slices)
+        new_lengths = [None] * len(new_slices)
 
     try:
         len(new_lengths)
     except TypeError:
         new_lengths = (new_lengths,)
 
-    assert (len(slices) == len(new_lengths))
+    assert (len(new_slices) == len(new_lengths))
 
-    new_slices = list(slices)
+    new_slices = list(new_slices)
     for i, each_length in enumerate(new_lengths):
         new_slices[i] = reformat_slice(new_slices[i], each_length)
 
