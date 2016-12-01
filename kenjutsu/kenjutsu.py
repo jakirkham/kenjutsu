@@ -106,10 +106,6 @@ def reformat_slice(a_slice, a_length=None):
             new_slice_stop = a_length
         elif (new_slice_stop >= a_length) and (new_slice_step < 0):
             new_slice_start = new_slice_stop = 0
-        elif (new_slice_stop < 0) and (new_slice_step > 0):
-            new_slice_stop += a_length
-        elif (new_slice_stop < 0) and (new_slice_step < 0):
-            new_slice_stop += a_length
 
 
     # Build new slice and return.
