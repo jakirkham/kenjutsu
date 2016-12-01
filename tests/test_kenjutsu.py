@@ -293,11 +293,35 @@ class TestKenjutsu(unittest.TestCase):
         l = kenjutsu.len_slice(slice(None), 10)
         self.assertEqual(l, len(range(10)[:]))
 
+        l = kenjutsu.len_slice(slice(None, None, -1), 10)
+        self.assertEqual(l, 10)
+
+        l = kenjutsu.len_slice(slice(None, None, -1), 10)
+        self.assertEqual(l, len(range(10)[::-1]))
+
         l = kenjutsu.len_slice(slice(None, None, 20), 10)
         self.assertEqual(l, 1)
 
         l = kenjutsu.len_slice(slice(None, None, 20), 10)
         self.assertEqual(l, len(range(10)[::20]))
+
+        l = kenjutsu.len_slice(slice(None, None, -20), 10)
+        self.assertEqual(l, 1)
+
+        l = kenjutsu.len_slice(slice(None, None, -20), 10)
+        self.assertEqual(l, len(range(10)[::-20]))
+
+        l = kenjutsu.len_slice(slice(-15, None, -20), 10)
+        self.assertEqual(l, 0)
+
+        l = kenjutsu.len_slice(slice(-15, None, -20), 10)
+        self.assertEqual(l, len(range(10)[-15::-20]))
+
+        l = kenjutsu.len_slice(slice(15, None, -20), 10)
+        self.assertEqual(l, 1)
+
+        l = kenjutsu.len_slice(slice(15, None, -20), 10)
+        self.assertEqual(l, len(range(10)[15::-20]))
 
         l = kenjutsu.len_slice(slice(2, None), 10)
         self.assertEqual(l, 8)
@@ -328,6 +352,31 @@ class TestKenjutsu(unittest.TestCase):
 
         l = kenjutsu.len_slice(slice(2, 6, 3))
         self.assertEqual(l, len(range(10)[2:6:3]))
+
+        l = kenjutsu.len_slice(slice(-5, None, -2), 10)
+        self.assertEqual(l, 3)
+
+        l = kenjutsu.len_slice(slice(-5, None, -2), 10)
+        self.assertEqual(l, len(range(10)[-5::-2]))
+
+        # TODO: Fix so it works.
+        l = kenjutsu.len_slice(slice(None, -5, -2), 10)
+        self.assertEqual(l, 2)
+
+        l = kenjutsu.len_slice(slice(None, -5, -2), 10)
+        self.assertEqual(l, len(range(10)[:-5:-2]))
+
+        l = kenjutsu.len_slice(slice(None, -15, -2), 10)
+        self.assertEqual(l, 5)
+
+        l = kenjutsu.len_slice(slice(None, -15, -2), 10)
+        self.assertEqual(l, len(range(10)[:-15:-2]))
+
+        l = kenjutsu.len_slice(slice(None, 15, -2), 10)
+        self.assertEqual(l, 0)
+
+        l = kenjutsu.len_slice(slice(None, 15, -2), 10)
+        self.assertEqual(l, len(range(10)[:15:-2]))
 
         l = kenjutsu.len_slice(slice(None, -3, 2), 10)
         self.assertEqual(l, 4)
