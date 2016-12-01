@@ -310,9 +310,9 @@ def split_blocks(space_shape, block_shape, block_halo=None):
     """
 
     try:
-        xrange
+        irange = xrange
     except NameError:
-        xrange = range
+        irange = range
 
     try:
         from itertools import ifilter, imap
@@ -329,7 +329,7 @@ def split_blocks(space_shape, block_shape, block_halo=None):
             "should be the same."
 
         block_halo = tuple()
-        for i in xrange(len(space_shape)):
+        for i in irange(len(space_shape)):
             block_halo += (0,)
 
     vec_add = lambda a, b: imap(operator.add, a, b)
@@ -367,7 +367,7 @@ def split_blocks(space_shape, block_shape, block_halo=None):
     haloed_ranges_per_dim = []
     trimmed_halos_per_dim = []
 
-    for each_dim in xrange(len(space_shape)):
+    for each_dim in irange(len(space_shape)):
         # Construct each block using the block size given. Allow to spill over.
         if block_shape[each_dim] == -1:
             block_shape = (block_shape[:each_dim] +
@@ -376,9 +376,9 @@ def split_blocks(space_shape, block_shape, block_halo=None):
 
         # Generate block ranges.
         a_range = []
-        for i in xrange(2):
+        for i in irange(2):
             offset = i * block_shape[each_dim]
-            this_range = xrange(
+            this_range = irange(
                 offset,
                 offset + space_shape[each_dim],
                 block_shape[each_dim]
@@ -387,7 +387,7 @@ def split_blocks(space_shape, block_shape, block_halo=None):
 
         # Add the halo to each block on both sides.
         a_range_haloed = []
-        for i in xrange(2):
+        for i in irange(2):
             sign = 2 * i - 1
 
             haloed = vec_mul(
@@ -402,7 +402,7 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         # Compute how to trim the halo off of each block.
         # Clip each block to the boundaries.
         a_trimmed_halo = []
-        for i in xrange(2):
+        for i in irange(2):
             trimmed = vec_sub(a_range[i], a_range_haloed[0])
             a_trimmed_halo.append(list(trimmed))
             a_range[i] = list(vec_clip(a_range[i], 0, space_shape[each_dim]))
