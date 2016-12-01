@@ -221,6 +221,57 @@ class TestKenjutsu(unittest.TestCase):
         )
 
 
+    def test_reformat_slices(self):
+        rf_slice = kenjutsu.reformat_slices(slice(None))
+        self.assertEqual(
+            rf_slice,
+            (slice(0, None, 1),)
+        )
+
+
+        rf_slice = kenjutsu.reformat_slices((slice(None),))
+        self.assertEqual(
+            rf_slice,
+            (slice(0, None, 1),)
+        )
+
+
+        rf_slice = kenjutsu.reformat_slices((
+            slice(None),
+            slice(3, None),
+            slice(None, 5),
+            slice(None, None, 2)
+        ))
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, None, 1),
+                slice(3, None, 1),
+                slice(0, 5, 1),
+                slice(0, None, 2)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            (
+                slice(None),
+                slice(3, None),
+                slice(None, 5),
+                slice(None, None, 2)
+            ),
+            (10, 13, 15, 20)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 10, 1),
+                slice(3, 13, 1),
+                slice(0, 5, 1),
+                slice(0, 20, 2)
+            )
+        )
+
+
     def test_split_blocks(self):
         blocks = kenjutsu.split_blocks((2,), (1,))
         self.assertEqual(
