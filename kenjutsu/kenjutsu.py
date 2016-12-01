@@ -136,20 +136,6 @@ def reformat_slices(slices, lengths=None):
 
         Examples:
 
-            >>> reformat_slices(slice(None))
-            (slice(0, None, 1),)
-
-            >>> reformat_slices((slice(None),))
-            (slice(0, None, 1),)
-
-            >>> reformat_slices((
-            ...     slice(None),
-            ...     slice(3, None),
-            ...     slice(None, 5),
-            ...     slice(None, None, 2)
-            ... ))
-            (slice(0, None, 1), slice(3, None, 1), slice(0, 5, 1), slice(0, None, 2))
-
             >>> reformat_slices(
             ...     (
             ...         slice(None),
