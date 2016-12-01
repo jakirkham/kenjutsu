@@ -75,9 +75,7 @@ def reformat_slice(a_slice, a_length=None):
         elif (new_slice_step > a_length):
             new_slice_step = a_length
 
-        if (new_slice_start is None) and (new_slice_step > 0):
-            pass
-        elif (new_slice_start is None) and (new_slice_step < 0):
+        if (new_slice_start is None) and (new_slice_step < 0):
             new_slice_start = a_length
         elif (new_slice_start <= -a_length) and (new_slice_step > 0):
             new_slice_start = 0
