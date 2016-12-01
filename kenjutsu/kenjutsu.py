@@ -342,7 +342,6 @@ def split_blocks(space_shape, block_shape, block_halo=None):
     vec_sub = lambda a, b: imap(operator.sub, a, b)
 
     vec_mul = lambda a, b: imap(operator.mul, a, b)
-    vec_div = lambda a, b: imap(operator.div, a, b)
     vec_mod = lambda a, b: imap(operator.mod, a, b)
 
     vec_nonzero = lambda a: \
