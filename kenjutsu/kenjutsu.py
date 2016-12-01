@@ -23,6 +23,7 @@ __date__ = "$Sep 08, 2016 15:46:46 EDT$"
 
 
 import itertools
+import numbers
 import operator
 import math
 import warnings
@@ -55,6 +56,11 @@ def reformat_slice(a_slice, a_length=None):
     new_slice = a_slice
     if (new_slice is Ellipsis) or (new_slice == tuple()):
         new_slice = slice(None)
+    elif isinstance(a_slice, numbers.Integral):
+        if a_slice < 0:
+            new_slice = slice(a_slice, a_slice-1, -1)
+        else:
+            new_slice = slice(a_slice, a_slice+1, 1)
     elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
@@ -134,6 +140,10 @@ def reformat_slice(a_slice, a_length=None):
             step = 1
 
     new_slice = slice(start, stop, step)
+    if isinstance(a_slice, numbers.Integral):
+        if new_slice.start == new_slice.stop == 0:
+            raise IndexError("Index out of range.")
+        new_slice = new_slice.start
 
     return(new_slice)
 
