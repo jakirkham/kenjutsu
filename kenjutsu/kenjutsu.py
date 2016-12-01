@@ -52,7 +52,9 @@ def reformat_slice(a_slice, a_length=None):
             slice(2, 9, 1)
     """
 
-    if not isinstance(a_slice, slice):
+    if a_slice is Ellipsis:
+        a_slice = slice(None)
+    elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
         )
