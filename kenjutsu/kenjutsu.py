@@ -201,42 +201,12 @@ def len_slice(a_slice, a_length=None):
                                    possible.
 
         Examples:
-            >>> len_slice(slice(None)) #doctest: +IGNORE_EXCEPTION_DETAIL
-            Traceback (most recent call last):
-            UnknownSliceLengthException: Cannot determine slice length without a defined end point. The reformatted slice was slice(0, None, 1).
-
-            >>> len_slice(slice(None), 10)
-            10
-
-            >>> len_slice(slice(None), 10) == len(range(10)[:])
-            True
 
             >>> len_slice(slice(2, None), 10)
             8
 
-            >>> len_slice(slice(2, None), 10) == len(range(10)[2:])
-            True
-
-            >>> len_slice(slice(2, None, None), 10)
-            8
-
-            >>> len_slice(slice(2, None, None), 10) == len(range(10)[2:])
-            True
-
             >>> len_slice(slice(2, 6))
             4
-
-            >>> len_slice(slice(2, 6), 1000)
-            4
-
-            >>> len_slice(slice(2, 6), 10) == len(range(10)[2:6])
-            True
-
-            >>> len_slice(slice(2, 6, 3))
-            2
-
-            >>> len_slice(slice(2, 6, 3), 10) == len(range(10)[2:6:3])
-            True
     """
 
     new_slice = reformat_slice(a_slice, a_length)
