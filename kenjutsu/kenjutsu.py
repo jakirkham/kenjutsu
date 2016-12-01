@@ -315,11 +315,9 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         xrange = range
 
     try:
-        from itertools import ifilter
-        from itertools import imap
+        from itertools import ifilter, imap
     except ImportError:
-        ifilter = filter
-        imap = map
+        ifilter, imap = filter, map
 
     if block_halo is not None:
         assert (len(space_shape) == len(block_shape) == len(block_halo)), \
