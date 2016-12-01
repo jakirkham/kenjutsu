@@ -228,13 +228,24 @@ class TestKenjutsu(unittest.TestCase):
             (slice(0, None, 1),)
         )
 
-
         rf_slice = kenjutsu.reformat_slices((slice(None),))
         self.assertEqual(
             rf_slice,
             (slice(0, None, 1),)
         )
 
+        rf_slice = kenjutsu.reformat_slices(slice(None), 10)
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 10, 1),)
+        )
+
+
+        rf_slice = kenjutsu.reformat_slices((slice(None),), 10)
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 10, 1),)
+        )
 
         rf_slice = kenjutsu.reformat_slices((
             slice(None),
