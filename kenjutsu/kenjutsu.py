@@ -75,9 +75,7 @@ def reformat_slice(a_slice, a_length=None):
         elif (new_slice_step > a_length):
             new_slice_step = a_length
 
-        if (new_slice_start is None) and (new_slice_step > 0):
-            pass
-        elif (new_slice_start is None) and (new_slice_step < 0):
+        if (new_slice_start is None) and (new_slice_step < 0):
             new_slice_start = a_length
         elif (new_slice_start <= -a_length) and (new_slice_step > 0):
             new_slice_start = 0
@@ -323,11 +321,9 @@ def split_blocks(space_shape, block_shape, block_halo=None):
     try:
         from itertools import ifilter
         from itertools import imap
-        from itertools import izip
     except ImportError:
         ifilter = filter
         imap = map
-        izip = zip
 
     if block_halo is not None:
         assert (len(space_shape) == len(block_shape) == len(block_halo)), \
@@ -346,7 +342,6 @@ def split_blocks(space_shape, block_shape, block_halo=None):
     vec_sub = lambda a, b: imap(operator.sub, a, b)
 
     vec_mul = lambda a, b: imap(operator.mul, a, b)
-    vec_div = lambda a, b: imap(operator.div, a, b)
     vec_mod = lambda a, b: imap(operator.mod, a, b)
 
     vec_nonzero = lambda a: \
