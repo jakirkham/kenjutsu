@@ -44,77 +44,12 @@ def reformat_slice(a_slice, a_length=None):
                                    possible.
 
         Examples:
-            >>> reformat_slice(slice(None))
-            slice(0, None, 1)
 
-            >>> reformat_slice(slice(None), 10)
-            slice(0, 10, 1)
-
-            >>> reformat_slice(slice(2, None))
-            slice(2, None, 1)
-
-            >>> reformat_slice(slice(2, None), 10)
-            slice(2, 10, 1)
-
-            >>> reformat_slice(slice(2, None, None))
-            slice(2, None, 1)
-
-            >>> reformat_slice(slice(2, None, None), 10)
-            slice(2, 10, 1)
+            >>> reformat_slice(slice(2, -1, None))
+            slice(2, -1, 1)
 
             >>> reformat_slice(slice(2, -1, None), 10)
             slice(2, 9, 1)
-
-            >>> range(10)[reformat_slice(slice(None))] == range(10)[:]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, None))] == range(10)[2:]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, 6))] == range(10)[2:6]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, 6, 3))] == range(10)[2:6:3]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, None, 3))] == range(10)[2::3]
-            True
-
-            >>> range(10)[reformat_slice(slice(None), 10)] == range(10)[:]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, None), 10)] == range(10)[2:]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, 6), 10)] == range(10)[2:6]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, 6, 3), 10)] == range(10)[2:6:3]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, None, 3), 10)] == range(10)[2::3]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, -6, 3), 10)] == range(10)[2:-6:3]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, -1), 10)] == range(10)[2:-1]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, 20), 10)] == range(10)[2:20]
-            True
-
-            >>> range(10)[reformat_slice(slice(2, -20), 10)] == range(10)[2:-20]
-            True
-
-            >>> range(10)[reformat_slice(slice(20, -1), 10)] == range(10)[20:-1]
-            True
-
-            >>> range(10)[reformat_slice(slice(-20, -1), 10)] == range(10)[-20:-1]
-            True
-
-            >>> range(10)[reformat_slice(slice(-5, -1), 10)] == range(10)[-5:-1]
-            True
     """
 
     assert (a_slice is not None), "err"
@@ -201,20 +136,6 @@ def reformat_slices(slices, lengths=None):
 
         Examples:
 
-            >>> reformat_slices(slice(None))
-            (slice(0, None, 1),)
-
-            >>> reformat_slices((slice(None),))
-            (slice(0, None, 1),)
-
-            >>> reformat_slices((
-            ...     slice(None),
-            ...     slice(3, None),
-            ...     slice(None, 5),
-            ...     slice(None, None, 2)
-            ... ))
-            (slice(0, None, 1), slice(3, None, 1), slice(0, 5, 1), slice(0, None, 2))
-
             >>> reformat_slices(
             ...     (
             ...         slice(None),
@@ -280,42 +201,12 @@ def len_slice(a_slice, a_length=None):
                                    possible.
 
         Examples:
-            >>> len_slice(slice(None)) #doctest: +IGNORE_EXCEPTION_DETAIL
-            Traceback (most recent call last):
-            UnknownSliceLengthException: Cannot determine slice length without a defined end point. The reformatted slice was slice(0, None, 1).
-
-            >>> len_slice(slice(None), 10)
-            10
-
-            >>> len_slice(slice(None), 10) == len(range(10)[:])
-            True
 
             >>> len_slice(slice(2, None), 10)
             8
 
-            >>> len_slice(slice(2, None), 10) == len(range(10)[2:])
-            True
-
-            >>> len_slice(slice(2, None, None), 10)
-            8
-
-            >>> len_slice(slice(2, None, None), 10) == len(range(10)[2:])
-            True
-
             >>> len_slice(slice(2, 6))
             4
-
-            >>> len_slice(slice(2, 6), 1000)
-            4
-
-            >>> len_slice(slice(2, 6), 10) == len(range(10)[2:6])
-            True
-
-            >>> len_slice(slice(2, 6, 3))
-            2
-
-            >>> len_slice(slice(2, 6, 3), 10) == len(range(10)[2:6:3])
-            True
     """
 
     new_slice = reformat_slice(a_slice, a_length)
@@ -347,14 +238,6 @@ def len_slices(slices, lengths=None):
                                          values filled if possible.
 
         Examples:
-            >>> len_slices((
-            ...     slice(None),
-            ...     slice(3, None),
-            ...     slice(None, 5),
-            ...     slice(None, None, 2)
-            ... )) #doctest: +IGNORE_EXCEPTION_DETAIL
-            Traceback (most recent call last):
-            UnknownSliceLengthException: Cannot determine slice length without a defined end point. The reformatted slice was slice(0, None, 1).
 
             >>> len_slices(
             ...     (
