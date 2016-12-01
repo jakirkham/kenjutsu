@@ -313,6 +313,30 @@ class TestKenjutsu(unittest.TestCase):
         self.assertEqual(l, len(range(10)[2:6:3]))
 
 
+    def test_len_slices(self):
+        with self.assertRaises(kenjutsu.UnknownSliceLengthException):
+            kenjutsu.len_slices((
+                slice(None),
+                slice(3, None),
+                slice(None, 5),
+                slice(None, None, 2)
+            ))
+
+        l = kenjutsu.len_slices(
+            (
+                slice(None),
+                slice(3, None),
+                slice(None, 5),
+                slice(None, None, 2)
+            ),
+            (10, 13, 15, 20)
+        )
+        self.assertEqual(
+            l,
+            (10, 10, 5, 10)
+        )
+
+
     def test_split_blocks(self):
         blocks = kenjutsu.split_blocks((2,), (1,))
         self.assertEqual(
