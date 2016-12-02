@@ -53,64 +53,63 @@ def reformat_slice(a_slice, a_length=None):
     """
 
     assert (a_slice is not None), "err"
+    assert (a_slice.step != 0), "err"
+
+    start = a_slice.start
+    stop = a_slice.stop
+    step = a_slice.step
 
     # Fill unknown values.
-
-    new_slice_step = a_slice.step
-    if new_slice_step is None:
-        new_slice_step = 1
-
-    new_slice_start = a_slice.start
-    if (new_slice_start is None) and (new_slice_step > 0):
-        new_slice_start = 0
-
-    new_slice_stop = a_slice.stop
-
+    if step is None:
+        step = 1
+    if start is None:
+        if step > 0:
+            start = 0
+        elif step < 0:
+            start = -1
+    if (stop is None) and (step > 0):
+        stop = a_length
 
     # Make adjustments for length
-
     if a_length is not None:
-        if (new_slice_step < -a_length):
-            new_slice_step = -a_length
-        elif (new_slice_step > a_length):
-            new_slice_step = a_length
+        # Normalize out-of-bound step sizes.
+        if step < -a_length:
+            step = -a_length
+        elif step > a_length:
+            step = a_length
 
-        if (new_slice_start is None) and (new_slice_step < 0):
-            new_slice_start = a_length
-        elif (new_slice_start <= -a_length) and (new_slice_step > 0):
-            new_slice_start = 0
-        elif (new_slice_start < -a_length) and (new_slice_step < 0):
-            new_slice_start = new_slice_stop = 0
-        elif (new_slice_start > a_length) and (new_slice_step > 0):
-            new_slice_start = a_length
-        elif (new_slice_start > a_length) and (new_slice_step < 0):
-            new_slice_start = a_length
-        elif (new_slice_start < 0) and (new_slice_step > 0):
-            new_slice_start += a_length
-        elif (new_slice_start < 0) and (new_slice_step < 0):
-            new_slice_start += a_length
+        # Normalize bounded negative values.
+        if -a_length <= start < 0:
+            start += a_length
+        if -a_length <= stop < 0:
+            stop += a_length
 
-        if (new_slice_stop is None) and (new_slice_step > 0):
-            new_slice_stop = a_length
-        elif (new_slice_stop is None) and (new_slice_step < 0):
-            pass
-        elif (new_slice_stop <= -a_length) and (new_slice_step > 0):
-            new_slice_stop = 0
-        elif (new_slice_stop < -a_length) and (new_slice_step < 0):
-            new_slice_stop = None
-        elif (new_slice_stop < 0) and (new_slice_step > 0):
-            new_slice_stop += a_length
-        elif (new_slice_stop < 0) and (new_slice_step < 0):
-            new_slice_stop += a_length
-        elif (new_slice_stop > a_length) and (new_slice_step > 0):
-            new_slice_stop = a_length
-        elif (new_slice_stop >= a_length) and (new_slice_step < 0):
-            new_slice_start = new_slice_stop = 0
+        # Handle out-of-bound limits.
+        if step > 0:
+            if (start > a_length) or (stop < -a_length):
+                start = stop = 0
+            elif start < -a_length:
+                start = 0
+            elif stop > a_length:
+                stop = a_length
+        elif step < 0:
+            if (start < -a_length) or (stop >= (a_length - 1)):
+                start = stop = 0
+            elif start >= a_length:
+                start = a_length - 1
+            elif stop < -a_length:
+                stop = None
 
+    # Catch some known empty slices.
+    if (step > 0) and (stop == 0):
+        start = stop = 0
+    elif (stop is not None) and (start >= 0) and (stop >= 0):
+        if (step > 0) and (start > stop):
+            start = stop = 0
+        elif (step < 0) and (start < stop):
+            start = stop = 0
 
-    # Build new slice and return.
-
-    new_slice = slice(new_slice_start, new_slice_stop, new_slice_step)
+    new_slice = slice(start, stop, step)
 
     return(new_slice)
 
