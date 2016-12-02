@@ -70,6 +70,8 @@ def reformat_slice(a_slice, a_length=None):
     if (stop is None) and (step > 0):
         stop = a_length
 
+    stop_i = stop is not None
+
     # Make adjustments for length
     if a_length is not None:
         # Normalize out-of-bound step sizes.
@@ -81,7 +83,7 @@ def reformat_slice(a_slice, a_length=None):
         # Normalize bounded negative values.
         if -a_length <= start < 0:
             start += a_length
-        if -a_length <= stop < 0:
+        if stop_i and (-a_length <= stop < 0):
             stop += a_length
 
         # Handle out-of-bound limits.
@@ -94,18 +96,19 @@ def reformat_slice(a_slice, a_length=None):
                 if stop > a_length:
                     stop = a_length
         elif step < 0:
-            if (start < -a_length) or (stop >= (a_length - 1)):
+            if (start < -a_length) or (stop_i and stop >= (a_length - 1)):
                 start = stop = 0
             else:
                 if start >= a_length:
                     start = a_length - 1
-                if stop < -a_length:
+                if stop_i and stop < -a_length:
                     stop = None
+                    stop_i = True
 
     # Catch some known empty slices.
     if (step > 0) and (stop == 0):
         start = stop = 0
-    elif (stop is not None) and (start >= 0) and (stop >= 0):
+    elif stop_i and (start >= 0) and (stop >= 0):
         if (step > 0) and (start > stop):
             start = stop = 0
         elif (step < 0) and (start < stop):
