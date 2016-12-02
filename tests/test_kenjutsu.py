@@ -293,6 +293,12 @@ class TestKenjutsu(unittest.TestCase):
         l = kenjutsu.len_slice(slice(None), 10)
         self.assertEqual(l, len(range(10)[:]))
 
+        l = kenjutsu.len_slice(slice(None, None, 20), 10)
+        self.assertEqual(l, 1)
+
+        l = kenjutsu.len_slice(slice(None, None, 20), 10)
+        self.assertEqual(l, len(range(10)[::20]))
+
         l = kenjutsu.len_slice(slice(2, None), 10)
         self.assertEqual(l, 8)
 
@@ -322,6 +328,12 @@ class TestKenjutsu(unittest.TestCase):
 
         l = kenjutsu.len_slice(slice(2, 6, 3))
         self.assertEqual(l, len(range(10)[2:6:3]))
+
+        l = kenjutsu.len_slice(slice(None, -3, 2), 10)
+        self.assertEqual(l, 4)
+
+        l = kenjutsu.len_slice(slice(None, -3, 2), 10)
+        self.assertEqual(l, len(range(10)[:-3:2]))
 
 
     def test_len_slices(self):
