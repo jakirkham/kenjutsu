@@ -103,7 +103,7 @@ def reformat_slice(a_slice, a_length=None):
                     start = a_length - 1
                 if stop_i and stop < -a_length:
                     stop = None
-                    stop_i = True
+                    stop_i = False
 
     # Catch some known empty slices.
     if (step > 0) and (stop == 0):
