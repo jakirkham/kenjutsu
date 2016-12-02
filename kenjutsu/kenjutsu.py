@@ -88,17 +88,19 @@ def reformat_slice(a_slice, a_length=None):
         if step > 0:
             if (start > a_length) or (stop < -a_length):
                 start = stop = 0
-            elif start < -a_length:
-                start = 0
-            elif stop > a_length:
-                stop = a_length
+            else:
+                if start < -a_length:
+                    start = 0
+                if stop > a_length:
+                    stop = a_length
         elif step < 0:
             if (start < -a_length) or (stop >= (a_length - 1)):
                 start = stop = 0
-            elif start >= a_length:
-                start = a_length - 1
-            elif stop < -a_length:
-                stop = None
+            else:
+                if start >= a_length:
+                    start = a_length - 1
+                if stop < -a_length:
+                    stop = None
 
     # Catch some known empty slices.
     if (step > 0) and (stop == 0):
