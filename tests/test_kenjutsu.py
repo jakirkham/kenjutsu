@@ -195,6 +195,11 @@ class TestKenjutsu(unittest.TestCase):
                             len(range(size)[a_slice])
                         )
 
+            self.assertEqual(
+                kenjutsu.len_slice(Ellipsis, size),
+                len(range(size)[:])
+            )
+
 
     def test_len_slices(self):
         with self.assertRaises(kenjutsu.UnknownSliceLengthException):
