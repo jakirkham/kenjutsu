@@ -112,7 +112,28 @@ class TestKenjutsu(unittest.TestCase):
 
         self.assertEqual(
             str(e.exception),
-            "There must be an equal number of slices to lengths."
+            "Shape must be the same as the number of slices."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slices(
+                (slice(None), slice(None), Ellipsis), (1,)
+            )
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape must be as large or larger than the number of slices"
+            " without the Ellipsis."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slices(
+                (Ellipsis, Ellipsis), (1,)
+            )
+
+        self.assertEqual(
+            str(e.exception),
+            "Only one Ellipsis is permitted. Found multiple."
         )
 
         rf_slice = kenjutsu.reformat_slices(slice(None))
@@ -125,6 +146,18 @@ class TestKenjutsu(unittest.TestCase):
         self.assertEqual(
             rf_slice,
             (slice(0, None, 1),)
+        )
+
+        rf_slice = kenjutsu.reformat_slices(Ellipsis)
+        self.assertEqual(
+            rf_slice,
+            (Ellipsis,)
+        )
+
+        rf_slice = kenjutsu.reformat_slices(Ellipsis, 10)
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 10, 1),)
         )
 
         rf_slice = kenjutsu.reformat_slices(slice(None), 10)
@@ -172,6 +205,92 @@ class TestKenjutsu(unittest.TestCase):
                 slice(3, 13, 1),
                 slice(0, 5, 1),
                 slice(0, 20, 2)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            Ellipsis,
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 2, 1),
+                slice(0, 3, 1),
+                slice(0, 4, 1),
+                slice(0, 5, 1)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            (
+                Ellipsis,
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 2, 1),
+                slice(0, 3, 1),
+                slice(0, 4, 1),
+                slice(0, 1, 1)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            (
+                slice(0, 1),
+                Ellipsis
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 1, 1),
+                slice(0, 3, 1),
+                slice(0, 4, 1),
+                slice(0, 5, 1)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            (
+                slice(0, 1),
+                Ellipsis,
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 1, 1),
+                slice(0, 3, 1),
+                slice(0, 4, 1),
+                slice(0, 1, 1)
+            )
+        )
+
+        rf_slice = kenjutsu.reformat_slices(
+            (
+                slice(0, 1),
+                Ellipsis,
+                slice(0, 1),
+                slice(0, 1),
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            rf_slice,
+            (
+                slice(0, 1, 1),
+                slice(0, 1, 1),
+                slice(0, 1, 1),
+                slice(0, 1, 1)
             )
         )
 
