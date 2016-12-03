@@ -152,6 +152,12 @@ def reformat_slice(a_slice, a_length=None):
             start = stop = 0
             step = 1
 
+    # Normalize slices.
+    if stop_i and (step > 0):
+        units, mod = divmod(stop - start, step)
+        units += int(mod != 0)
+        stop = units * step + start
+
     new_slice = slice(start, stop, step)
     if isinstance(a_slice, numbers.Integral):
         if new_slice.start == new_slice.stop == 0:
