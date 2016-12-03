@@ -80,6 +80,31 @@ class TestKenjutsu(unittest.TestCase):
                             len(range(size)[a_slice])
                         )
 
+            rf_slice = kenjutsu.reformat_slice(Ellipsis)
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
+            rf_slice = kenjutsu.reformat_slice(Ellipsis, size)
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
+            start = rf_slice.start
+            stop = rf_slice.stop
+            step = rf_slice.step
+
+            if step is not None and step < 0 and stop is None:
+                stop = -1
+
+            l = float(stop - start)/float(step)
+            self.assertEqual(
+                int(math.ceil(l)),
+                len(range(size)[:])
+            )
+
 
     def test_reformat_slices(self):
         with self.assertRaises(ValueError) as e:
