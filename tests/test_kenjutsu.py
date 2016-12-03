@@ -4,10 +4,18 @@
 
 
 import doctest
+import itertools
+import math
 import sys
 import unittest
 
 from kenjutsu import kenjutsu
+
+
+try:
+    irange = xrange
+except NameError:
+    irange = range
 
 
 # Load doctests from `kenjutsu`.
@@ -22,317 +30,39 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_reformat_slice(self):
-        rf_slice = kenjutsu.reformat_slice(slice(None))
-        self.assertEqual(
-            rf_slice,
-            slice(0, None, 1)
-        )
+        for size in [10, 11, 12]:
+            excess = size + 3
+            for start in itertools.chain([None], irange(-excess, excess)):
+                for stop in itertools.chain([None], irange(-excess, excess)):
+                    for step in itertools.chain(range(-excess, excess)):
+                        step = None if step == 0 else step
 
-        rf_slice = kenjutsu.reformat_slice(slice(None), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(0, 10, 1)
-        )
+                        a_slice = slice(start, stop, step)
 
-        rf_slice = kenjutsu.reformat_slice(slice(2, None))
-        self.assertEqual(
-            rf_slice,
-            slice(2, None, 1)
-        )
+                        rf_slice = kenjutsu.reformat_slice(a_slice)
+                        self.assertEqual(
+                            range(size)[a_slice],
+                            range(size)[rf_slice]
+                        )
 
-        rf_slice = kenjutsu.reformat_slice(slice(2, None), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(2, 10, 1)
-        )
+                        rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                        self.assertEqual(
+                            range(size)[a_slice],
+                            range(size)[rf_slice]
+                        )
 
-        rf_slice = kenjutsu.reformat_slice(slice(2, None, None))
-        self.assertEqual(
-            rf_slice,
-            slice(2, None, 1)
-        )
+                        start = rf_slice.start
+                        stop = rf_slice.stop
+                        step = rf_slice.step
 
-        rf_slice = kenjutsu.reformat_slice(slice(2, None, None), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(2, 10, 1)
-        )
+                        if step is not None and step < 0 and stop is None:
+                            stop = -1
 
-        rf_slice = kenjutsu.reformat_slice(slice(2, -1))
-        self.assertEqual(
-            rf_slice,
-            slice(2, -1, 1)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -1), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(2, 9, 1)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -1))
-        self.assertEqual(
-            rf_slice,
-            slice(-1, None, -1)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -1), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(9, None, -1)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -20), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(9, None, -10)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, 20), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(0, 10, 10)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-15, None, -20), 10)
-        self.assertEqual(
-            rf_slice,
-            slice(0, 0, -10)
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, 2))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, None))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 6))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:6]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 6, 3))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:6:3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -6, 3))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-6:3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, None, 3))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2::3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -1))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 20))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -20))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(20, -1))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[20:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-20, -1))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-20:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-5, -1))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-5:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -1))
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[::-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, 2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, None), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 6), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:6]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 6, 3), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:6:3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -6, 3), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-6:3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, None, 3), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2::3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, 20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(2, -20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[2:-20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(20, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[20:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-20, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-20:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-5, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-5:-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[::-1]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, -20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[::-20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, None, 20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[::20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-15, None, -20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-15::-20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(15, None, -20), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[15::-20]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(-5, None, -2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[-5::-2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, -5, -2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:-5:-2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, -15, -2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:-15:-2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, 15, -2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:15:-2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(None, -3, 2), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[:-3:2]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(5, 3, None), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[5:3]
-        )
-
-        rf_slice = kenjutsu.reformat_slice(slice(3, 5, -1), 10)
-        self.assertEqual(
-            range(10)[rf_slice],
-            range(10)[3:5:-1]
-        )
+                        l = float(stop - start)/float(step)
+                        self.assertEqual(
+                            int(math.ceil(l)),
+                            len(range(size)[a_slice])
+                        )
 
 
     def test_reformat_slices(self):
@@ -401,102 +131,20 @@ class TestKenjutsu(unittest.TestCase):
         with self.assertRaises(kenjutsu.UnknownSliceLengthException):
             kenjutsu.len_slice(slice(None))
 
-        l = kenjutsu.len_slice(slice(None), 10)
-        self.assertEqual(l, 10)
+        for size in [10, 11, 12]:
+            excess = size + 3
+            for start in itertools.chain([None], irange(-excess, excess)):
+                for stop in itertools.chain([None], irange(-excess, excess)):
+                    for step in itertools.chain(range(-excess, excess)):
+                        step = None if step == 0 else step
 
-        l = kenjutsu.len_slice(slice(None), 10)
-        self.assertEqual(l, len(range(10)[:]))
+                        a_slice = slice(start, stop, step)
 
-        l = kenjutsu.len_slice(slice(None, None, -1), 10)
-        self.assertEqual(l, 10)
-
-        l = kenjutsu.len_slice(slice(None, None, -1), 10)
-        self.assertEqual(l, len(range(10)[::-1]))
-
-        l = kenjutsu.len_slice(slice(None, None, 20), 10)
-        self.assertEqual(l, 1)
-
-        l = kenjutsu.len_slice(slice(None, None, 20), 10)
-        self.assertEqual(l, len(range(10)[::20]))
-
-        l = kenjutsu.len_slice(slice(None, None, -20), 10)
-        self.assertEqual(l, 1)
-
-        l = kenjutsu.len_slice(slice(None, None, -20), 10)
-        self.assertEqual(l, len(range(10)[::-20]))
-
-        l = kenjutsu.len_slice(slice(-15, None, -20), 10)
-        self.assertEqual(l, 0)
-
-        l = kenjutsu.len_slice(slice(-15, None, -20), 10)
-        self.assertEqual(l, len(range(10)[-15::-20]))
-
-        l = kenjutsu.len_slice(slice(15, None, -20), 10)
-        self.assertEqual(l, 1)
-
-        l = kenjutsu.len_slice(slice(15, None, -20), 10)
-        self.assertEqual(l, len(range(10)[15::-20]))
-
-        l = kenjutsu.len_slice(slice(2, None), 10)
-        self.assertEqual(l, 8)
-
-        l = kenjutsu.len_slice(slice(2, None), 10)
-        self.assertEqual(l, len(range(10)[2:]))
-
-        l = kenjutsu.len_slice(slice(2, None, None), 10)
-        self.assertEqual(l, 8)
-
-        l = kenjutsu.len_slice(slice(2, None, None), 10)
-        self.assertEqual(l, len(range(10)[2:]))
-
-        l = kenjutsu.len_slice(slice(2, 6))
-        self.assertEqual(l, 4)
-
-        l = kenjutsu.len_slice(slice(2, 6), 10)
-        self.assertEqual(l, 4)
-
-        l = kenjutsu.len_slice(slice(2, 6), 1000)
-        self.assertEqual(l, 4)
-
-        l = kenjutsu.len_slice(slice(2, 6), 10)
-        self.assertEqual(l, len(range(10)[2:6]))
-
-        l = kenjutsu.len_slice(slice(2, 6, 3))
-        self.assertEqual(l, 2)
-
-        l = kenjutsu.len_slice(slice(2, 6, 3))
-        self.assertEqual(l, len(range(10)[2:6:3]))
-
-        l = kenjutsu.len_slice(slice(-5, None, -2), 10)
-        self.assertEqual(l, 3)
-
-        l = kenjutsu.len_slice(slice(-5, None, -2), 10)
-        self.assertEqual(l, len(range(10)[-5::-2]))
-
-        # TODO: Fix so it works.
-        l = kenjutsu.len_slice(slice(None, -5, -2), 10)
-        self.assertEqual(l, 2)
-
-        l = kenjutsu.len_slice(slice(None, -5, -2), 10)
-        self.assertEqual(l, len(range(10)[:-5:-2]))
-
-        l = kenjutsu.len_slice(slice(None, -15, -2), 10)
-        self.assertEqual(l, 5)
-
-        l = kenjutsu.len_slice(slice(None, -15, -2), 10)
-        self.assertEqual(l, len(range(10)[:-15:-2]))
-
-        l = kenjutsu.len_slice(slice(None, 15, -2), 10)
-        self.assertEqual(l, 0)
-
-        l = kenjutsu.len_slice(slice(None, 15, -2), 10)
-        self.assertEqual(l, len(range(10)[:15:-2]))
-
-        l = kenjutsu.len_slice(slice(None, -3, 2), 10)
-        self.assertEqual(l, 4)
-
-        l = kenjutsu.len_slice(slice(None, -3, 2), 10)
-        self.assertEqual(l, len(range(10)[:-3:2]))
+                        l = kenjutsu.len_slice(a_slice, size)
+                        self.assertEqual(
+                            int(math.ceil(l)),
+                            len(range(size)[a_slice])
+                        )
 
 
     def test_len_slices(self):
