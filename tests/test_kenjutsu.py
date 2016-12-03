@@ -142,7 +142,7 @@ class TestKenjutsu(unittest.TestCase):
 
                         l = kenjutsu.len_slice(a_slice, size)
                         self.assertEqual(
-                            int(math.ceil(l)),
+                            l,
                             len(range(size)[a_slice])
                         )
 
