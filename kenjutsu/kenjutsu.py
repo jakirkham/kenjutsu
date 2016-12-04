@@ -57,7 +57,8 @@ def reformat_slice(a_slice, a_length=None):
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
         )
 
-    assert (a_slice.step != 0), "err"
+    if a_slice.step == 0:
+        raise ValueError("Slice cannot have a step size of `0`.")
 
     start = a_slice.start
     stop = a_slice.stop

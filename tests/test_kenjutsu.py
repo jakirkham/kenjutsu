@@ -38,6 +38,14 @@ class TestKenjutsu(unittest.TestCase):
             "Expected a `slice` type. Instead got `None`."
         )
 
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice(slice(None, None, 0))
+
+        self.assertEqual(
+            str(e.exception),
+            "Slice cannot have a step size of `0`."
+        )
+
         for size in [10, 11, 12]:
             excess = size + 3
             for start in itertools.chain([None], irange(-excess, excess)):
