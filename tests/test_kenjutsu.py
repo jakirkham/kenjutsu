@@ -196,6 +196,24 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_split_blocks(self):
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.split_blocks((1,), (1, 2), (1, 2, 3))
+
+        self.assertEqual(
+            str(e.exception),
+            "The dimensions of `space_shape`, `block_shape`, and `block_halo`"
+            " should be the same."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.split_blocks((1,), (1, 2))
+
+        self.assertEqual(
+            str(e.exception),
+            "The dimensions of `space_shape` and `block_shape` should be the"
+            " same."
+        )
+
         blocks = kenjutsu.split_blocks((2,), (1,))
         self.assertEqual(
             blocks,

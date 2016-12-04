@@ -333,13 +333,17 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         ifilter, imap = filter, map
 
     if block_halo is not None:
-        assert (len(space_shape) == len(block_shape) == len(block_halo)), \
-            "The dimensions of `space_shape`, `block_shape`, and " + \
-            "`block_halo` should be the same."
+        if not (len(space_shape) == len(block_shape) == len(block_halo)):
+            raise ValueError(
+                "The dimensions of `space_shape`, `block_shape`, and"
+                " `block_halo` should be the same."
+            )
     else:
-        assert (len(space_shape) == len(block_shape)), \
-            "The dimensions of `space_shape` and `block_shape` " + \
-            "should be the same."
+        if not (len(space_shape) == len(block_shape)):
+            raise ValueError(
+               "The dimensions of `space_shape` and `block_shape` should be"
+               " the same."
+            )
 
         block_halo = tuple()
         for i in irange(len(space_shape)):
