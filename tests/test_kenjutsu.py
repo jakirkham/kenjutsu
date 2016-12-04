@@ -30,6 +30,14 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_reformat_slice(self):
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice(None)
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected a `slice` type. Instead got `None`."
+        )
+
         for size in [10, 11, 12]:
             excess = size + 3
             for start in itertools.chain([None], irange(-excess, excess)):

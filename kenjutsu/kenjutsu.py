@@ -52,7 +52,11 @@ def reformat_slice(a_slice, a_length=None):
             slice(2, 9, 1)
     """
 
-    assert (a_slice is not None), "err"
+    if not isinstance(a_slice, slice):
+        raise ValueError(
+            "Expected a `slice` type. Instead got `%s`." % str(a_slice)
+        )
+
     assert (a_slice.step != 0), "err"
 
     start = a_slice.start
