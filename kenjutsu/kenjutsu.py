@@ -166,7 +166,8 @@ def reformat_slices(slices, lengths=None):
     except TypeError:
         new_lengths = (new_lengths,)
 
-    assert (len(new_slices) == len(new_lengths))
+    if len(new_slices) != len(new_lengths):
+        raise ValueError("There must be an equal number of slices to lengths.")
 
     new_slices = list(new_slices)
     for i, each_length in enumerate(new_lengths):
