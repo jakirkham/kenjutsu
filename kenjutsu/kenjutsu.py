@@ -53,7 +53,7 @@ def reformat_slice(a_slice, a_length=None):
     """
 
     new_slice = a_slice
-    if new_slice is Ellipsis:
+    if (new_slice is Ellipsis) or (new_slice == tuple()):
         new_slice = slice(None)
     elif not isinstance(a_slice, slice):
         raise ValueError(

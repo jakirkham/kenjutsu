@@ -92,6 +92,18 @@ class TestKenjutsu(unittest.TestCase):
                 range(size)[rf_slice]
             )
 
+            rf_slice = kenjutsu.reformat_slice(tuple())
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
+            rf_slice = kenjutsu.reformat_slice(tuple(), size)
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
             start = rf_slice.start
             stop = rf_slice.stop
             step = rf_slice.step
