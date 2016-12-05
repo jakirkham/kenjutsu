@@ -180,6 +180,18 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None, None, 2)
             ))
 
+        l = kenjutsu.len_slices(slice(None), 10)
+        self.assertEqual(
+            l,
+            (10,)
+        )
+
+        l = kenjutsu.len_slices((slice(None),), 10)
+        self.assertEqual(
+            l,
+            (10,)
+        )
+
         l = kenjutsu.len_slices(
             (
                 slice(None),
