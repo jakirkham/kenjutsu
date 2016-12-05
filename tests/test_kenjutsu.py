@@ -92,6 +92,18 @@ class TestKenjutsu(unittest.TestCase):
                 range(size)[rf_slice]
             )
 
+            rf_slice = kenjutsu.reformat_slice(tuple())
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
+            rf_slice = kenjutsu.reformat_slice(tuple(), size)
+            self.assertEqual(
+                range(size)[:],
+                range(size)[rf_slice]
+            )
+
             start = rf_slice.start
             stop = rf_slice.stop
             step = rf_slice.step
@@ -155,6 +167,18 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         rf_slice = kenjutsu.reformat_slices(Ellipsis, 10)
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 10, 1),)
+        )
+
+        rf_slice = kenjutsu.reformat_slices(tuple())
+        self.assertEqual(
+            rf_slice,
+            (Ellipsis,)
+        )
+
+        rf_slice = kenjutsu.reformat_slices(tuple(), 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
@@ -319,6 +343,11 @@ class TestKenjutsu(unittest.TestCase):
                 len(range(size)[:])
             )
 
+            self.assertEqual(
+                kenjutsu.len_slice(tuple(), size),
+                len(range(size)[:])
+            )
+
 
     def test_len_slices(self):
         with self.assertRaises(kenjutsu.UnknownSliceLengthException):
@@ -330,6 +359,12 @@ class TestKenjutsu(unittest.TestCase):
             ))
 
         l = kenjutsu.len_slices(Ellipsis, 10)
+        self.assertEqual(
+            l,
+            (10,)
+        )
+
+        l = kenjutsu.len_slices(tuple(), 10)
         self.assertEqual(
             l,
             (10,)
