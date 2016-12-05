@@ -194,7 +194,6 @@ class TestKenjutsu(unittest.TestCase):
             (slice(0, 10, 1),)
         )
 
-
         rf_slice = kenjutsu.reformat_slices((slice(None),), 10)
         self.assertEqual(
             rf_slice,
@@ -595,30 +594,30 @@ class TestKenjutsu(unittest.TestCase):
               (slice(5, 10, 1), slice(3, 11, 1)),
               (slice(5, 10, 1), slice(5, 12, 1)),
               (slice(5, 10, 1), slice(7, 12, 1))],
-              [(slice(0, 3, 1), slice(0, 2, 1)),
-               (slice(0, 3, 1), slice(2, 4, 1)),
-               (slice(0, 3, 1), slice(3, 5, 1)),
-               (slice(0, 3, 1), slice(3, 5, 1)),
-               (slice(0, 3, 1), slice(3, 5, 1)),
-               (slice(0, 3, 1), slice(3, 5, 1)),
-               (slice(3, 6, 1), slice(0, 2, 1)),
-               (slice(3, 6, 1), slice(2, 4, 1)),
-               (slice(3, 6, 1), slice(3, 5, 1)),
-               (slice(3, 6, 1), slice(3, 5, 1)),
-               (slice(3, 6, 1), slice(3, 5, 1)),
-               (slice(3, 6, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(0, 2, 1)),
-               (slice(4, 7, 1), slice(2, 4, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(0, 2, 1)),
-               (slice(4, 7, 1), slice(2, 4, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1)),
-               (slice(4, 7, 1), slice(3, 5, 1))])
+             [(slice(0, 3, 1), slice(0, 2, 1)),
+              (slice(0, 3, 1), slice(2, 4, 1)),
+              (slice(0, 3, 1), slice(3, 5, 1)),
+              (slice(0, 3, 1), slice(3, 5, 1)),
+              (slice(0, 3, 1), slice(3, 5, 1)),
+              (slice(0, 3, 1), slice(3, 5, 1)),
+              (slice(3, 6, 1), slice(0, 2, 1)),
+              (slice(3, 6, 1), slice(2, 4, 1)),
+              (slice(3, 6, 1), slice(3, 5, 1)),
+              (slice(3, 6, 1), slice(3, 5, 1)),
+              (slice(3, 6, 1), slice(3, 5, 1)),
+              (slice(3, 6, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(0, 2, 1)),
+              (slice(4, 7, 1), slice(2, 4, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(0, 2, 1)),
+              (slice(4, 7, 1), slice(2, 4, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1)),
+              (slice(4, 7, 1), slice(3, 5, 1))])
         )
 
 
