@@ -55,7 +55,7 @@ def reformat_slice(a_slice, a_length=None):
     new_slice = a_slice
     if new_slice is Ellipsis:
         new_slice = slice(None)
-    elif not isinstance(new_slice, slice):
+    elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(new_slice)
         )
