@@ -368,6 +368,12 @@ class TestKenjutsu(unittest.TestCase):
                             len(each_range[a_slice])
                         )
 
+                if start is not None:
+                    a_slice = start
+
+                    with self.assertRaises(TypeError):
+                        kenjutsu.len_slice(a_slice, size)
+
             self.assertEqual(
                 kenjutsu.len_slice(Ellipsis, size),
                 len(each_range[:])

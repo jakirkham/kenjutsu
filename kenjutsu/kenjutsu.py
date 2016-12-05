@@ -297,6 +297,11 @@ def len_slice(a_slice, a_length=None):
             4
     """
 
+    if isinstance(a_slice, numbers.Integral):
+        raise TypeError(
+            "An integral index does not provide an object with a length."
+        )
+
     new_slice = reformat_slice(a_slice, a_length)
 
     if new_slice.stop is None:
