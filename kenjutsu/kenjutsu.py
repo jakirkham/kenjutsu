@@ -52,8 +52,13 @@ def reformat_slice(a_slice, a_length=None):
             slice(2, 9, 1)
     """
 
-    assert (a_slice is not None), "err"
-    assert (a_slice.step != 0), "err"
+    if not isinstance(a_slice, slice):
+        raise ValueError(
+            "Expected a `slice` type. Instead got `%s`." % str(a_slice)
+        )
+
+    if a_slice.step == 0:
+        raise ValueError("Slice cannot have a step size of `0`.")
 
     start = a_slice.start
     stop = a_slice.stop
@@ -161,7 +166,8 @@ def reformat_slices(slices, lengths=None):
     except TypeError:
         new_lengths = (new_lengths,)
 
-    assert (len(new_slices) == len(new_lengths))
+    if len(new_slices) != len(new_lengths):
+        raise ValueError("There must be an equal number of slices to lengths.")
 
     new_slices = list(new_slices)
     for i, each_length in enumerate(new_lengths):
@@ -327,13 +333,17 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         ifilter, imap = filter, map
 
     if block_halo is not None:
-        assert (len(space_shape) == len(block_shape) == len(block_halo)), \
-            "The dimensions of `space_shape`, `block_shape`, and " + \
-            "`block_halo` should be the same."
+        if not (len(space_shape) == len(block_shape) == len(block_halo)):
+            raise ValueError(
+                "The dimensions of `space_shape`, `block_shape`, and"
+                " `block_halo` should be the same."
+            )
     else:
-        assert (len(space_shape) == len(block_shape)), \
-            "The dimensions of `space_shape` and `block_shape` " + \
-            "should be the same."
+        if not (len(space_shape) == len(block_shape)):
+            raise ValueError(
+               "The dimensions of `space_shape` and `block_shape` should be"
+               " the same."
+            )
 
         block_halo = tuple()
         for i in irange(len(space_shape)):

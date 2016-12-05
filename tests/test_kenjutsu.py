@@ -30,6 +30,22 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_reformat_slice(self):
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice(None)
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected a `slice` type. Instead got `None`."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice(slice(None, None, 0))
+
+        self.assertEqual(
+            str(e.exception),
+            "Slice cannot have a step size of `0`."
+        )
+
         for size in [10, 11, 12]:
             excess = size + 3
             for start in itertools.chain([None], irange(-excess, excess)):
@@ -66,6 +82,14 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_reformat_slices(self):
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slices((slice(None),), (1, 2))
+
+        self.assertEqual(
+            str(e.exception),
+            "There must be an equal number of slices to lengths."
+        )
+
         rf_slice = kenjutsu.reformat_slices(slice(None))
         self.assertEqual(
             rf_slice,
@@ -172,6 +196,24 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_split_blocks(self):
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.split_blocks((1,), (1, 2), (1, 2, 3))
+
+        self.assertEqual(
+            str(e.exception),
+            "The dimensions of `space_shape`, `block_shape`, and `block_halo`"
+            " should be the same."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.split_blocks((1,), (1, 2))
+
+        self.assertEqual(
+            str(e.exception),
+            "The dimensions of `space_shape` and `block_shape` should be the"
+            " same."
+        )
+
         blocks = kenjutsu.split_blocks((2,), (1,))
         self.assertEqual(
             blocks,
