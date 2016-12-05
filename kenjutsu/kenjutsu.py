@@ -352,7 +352,8 @@ def len_slices(slices, lengths=None):
     lens = []
 
     for each_slice in new_slices:
-        lens.append(len_slice(each_slice))
+        if not isinstance(each_slice, numbers.Integral):
+            lens.append(len_slice(each_slice))
 
     lens = tuple(lens)
 
