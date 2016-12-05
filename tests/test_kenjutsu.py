@@ -52,7 +52,7 @@ class TestKenjutsu(unittest.TestCase):
 
             for start in itertools.chain([None], irange(-excess, excess)):
                 for stop in itertools.chain([None], irange(-excess, excess)):
-                    for step in itertools.chain(range(-excess, excess)):
+                    for step in itertools.chain(irange(-excess, excess)):
                         step = None if step == 0 else step
 
                         a_slice = slice(start, stop, step)
@@ -330,7 +330,7 @@ class TestKenjutsu(unittest.TestCase):
             each_range = range(size)
             for start in itertools.chain([None], irange(-excess, excess)):
                 for stop in itertools.chain([None], irange(-excess, excess)):
-                    for step in itertools.chain(range(-excess, excess)):
+                    for step in itertools.chain(irange(-excess, excess)):
                         step = None if step == 0 else step
 
                         a_slice = slice(start, stop, step)
