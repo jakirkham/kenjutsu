@@ -114,13 +114,22 @@ def reformat_slice(a_slice, a_length=None):
                     stop_i = False
 
     # Catch some known empty slices.
-    if (step > 0) and (stop == 0):
+    if stop_i and (start == stop):
         start = stop = 0
+        step = 1
+    elif (step > 0) and (stop == 0):
+        start = stop = 0
+        step = 1
+    elif (step < 0) and (stop == -1):
+        start = stop = 0
+        step = 1
     elif stop_i and (start >= 0) and (stop >= 0):
         if (step > 0) and (start > stop):
             start = stop = 0
+            step = 1
         elif (step < 0) and (start < stop):
             start = stop = 0
+            step = 1
 
     new_slice = slice(start, stop, step)
 
