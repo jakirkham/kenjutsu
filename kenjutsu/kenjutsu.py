@@ -98,6 +98,7 @@ def reformat_slice(a_slice, a_length=None):
         if step > 0:
             if (start > a_length) or (stop < -a_length):
                 start = stop = 0
+                step = 1
             else:
                 if start < -a_length:
                     start = 0
@@ -106,6 +107,7 @@ def reformat_slice(a_slice, a_length=None):
         elif step < 0:
             if (start < -a_length) or (stop_i and stop >= (a_length - 1)):
                 start = stop = 0
+                step = 1
             else:
                 if start >= a_length:
                     start = a_length - 1
