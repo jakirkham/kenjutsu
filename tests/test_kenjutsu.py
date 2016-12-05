@@ -364,6 +364,12 @@ class TestKenjutsu(unittest.TestCase):
             (10,)
         )
 
+        l = kenjutsu.len_slices(tuple(), 10)
+        self.assertEqual(
+            l,
+            (10,)
+        )
+
         l = kenjutsu.len_slices(slice(None), 10)
         self.assertEqual(
             l,
