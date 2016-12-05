@@ -212,8 +212,9 @@ def reformat_slices(slices, lengths=None):
             new_lengths_after = new_lengths[pos_after:]
 
             new_lengths_el = new_lengths[pos_before:pos_after]
+            slice_el = len(new_lengths_el) * (slice(None),)
             slice_el = reformat_slices(
-                len(new_lengths_el) * (slice(None),),
+                slice_el,
                 new_lengths_el
             )
 
