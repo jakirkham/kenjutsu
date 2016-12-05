@@ -48,6 +48,8 @@ class TestKenjutsu(unittest.TestCase):
 
         for size in [10, 11, 12]:
             excess = size + 3
+            each_range = range(size)
+
             for start in itertools.chain([None], irange(-excess, excess)):
                 for stop in itertools.chain([None], irange(-excess, excess)):
                     for step in itertools.chain(range(-excess, excess)):
@@ -57,14 +59,14 @@ class TestKenjutsu(unittest.TestCase):
 
                         rf_slice = kenjutsu.reformat_slice(a_slice)
                         self.assertEqual(
-                            range(size)[a_slice],
-                            range(size)[rf_slice]
+                            each_range[a_slice],
+                            each_range[rf_slice]
                         )
 
                         rf_slice = kenjutsu.reformat_slice(a_slice, size)
                         self.assertEqual(
-                            range(size)[a_slice],
-                            range(size)[rf_slice]
+                            each_range[a_slice],
+                            each_range[rf_slice]
                         )
 
                         start = rf_slice.start
@@ -77,31 +79,31 @@ class TestKenjutsu(unittest.TestCase):
                         l = float(stop - start)/float(step)
                         self.assertEqual(
                             int(math.ceil(l)),
-                            len(range(size)[a_slice])
+                            len(each_range[a_slice])
                         )
 
             rf_slice = kenjutsu.reformat_slice(Ellipsis)
             self.assertEqual(
-                range(size)[:],
-                range(size)[rf_slice]
+                each_range[:],
+                each_range[rf_slice]
             )
 
             rf_slice = kenjutsu.reformat_slice(Ellipsis, size)
             self.assertEqual(
-                range(size)[:],
-                range(size)[rf_slice]
+                each_range[:],
+                each_range[rf_slice]
             )
 
             rf_slice = kenjutsu.reformat_slice(tuple())
             self.assertEqual(
-                range(size)[:],
-                range(size)[rf_slice]
+                each_range[:],
+                each_range[rf_slice]
             )
 
             rf_slice = kenjutsu.reformat_slice(tuple(), size)
             self.assertEqual(
-                range(size)[:],
-                range(size)[rf_slice]
+                each_range[:],
+                each_range[rf_slice]
             )
 
             start = rf_slice.start
@@ -114,7 +116,7 @@ class TestKenjutsu(unittest.TestCase):
             l = float(stop - start)/float(step)
             self.assertEqual(
                 int(math.ceil(l)),
-                len(range(size)[:])
+                len(each_range[:])
             )
 
 
@@ -325,6 +327,7 @@ class TestKenjutsu(unittest.TestCase):
 
         for size in [10, 11, 12]:
             excess = size + 3
+            each_range = range(size)
             for start in itertools.chain([None], irange(-excess, excess)):
                 for stop in itertools.chain([None], irange(-excess, excess)):
                     for step in itertools.chain(range(-excess, excess)):
@@ -335,17 +338,17 @@ class TestKenjutsu(unittest.TestCase):
                         l = kenjutsu.len_slice(a_slice, size)
                         self.assertEqual(
                             l,
-                            len(range(size)[a_slice])
+                            len(each_range[a_slice])
                         )
 
             self.assertEqual(
                 kenjutsu.len_slice(Ellipsis, size),
-                len(range(size)[:])
+                len(each_range[:])
             )
 
             self.assertEqual(
                 kenjutsu.len_slice(tuple(), size),
-                len(range(size)[:])
+                len(each_range[:])
             )
 
 
