@@ -172,6 +172,18 @@ class TestKenjutsu(unittest.TestCase):
             (slice(0, 10, 1),)
         )
 
+        rf_slice = kenjutsu.reformat_slices(tuple())
+        self.assertEqual(
+            rf_slice,
+            (Ellipsis,)
+        )
+
+        rf_slice = kenjutsu.reformat_slices(tuple(), 10)
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 10, 1),)
+        )
+
         rf_slice = kenjutsu.reformat_slices(slice(None), 10)
         self.assertEqual(
             rf_slice,

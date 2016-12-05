@@ -155,6 +155,9 @@ def reformat_slices(slices, lengths=None):
     """
 
     new_slices = slices
+    if new_slices == tuple():
+        new_slices = Ellipsis
+
     try:
         len(new_slices)
     except TypeError:
@@ -213,16 +216,18 @@ def reformat_slices(slices, lengths=None):
 
             new_lengths_el = new_lengths[pos_before:pos_after]
             slice_el = len(new_lengths_el) * (slice(None),)
-            slice_el = reformat_slices(
-                slice_el,
-                new_lengths_el
-            )
+            if slice_el:
+                slice_el = reformat_slices(
+                    slice_el,
+                    new_lengths_el
+                )
 
-        new_slices = (
-            reformat_slices(slices_before, new_lengths_before) +
-            slice_el +
-            reformat_slices(slices_after, new_lengths_after)
-        )
+        if slices_before:
+            slices_before = reformat_slices(slices_before, new_lengths_before)
+        if slices_after:
+            slices_after = reformat_slices(slices_after, new_lengths_after)
+
+        new_slices = slices_before + slice_el + slices_after
     else:
         if new_lengths is None:
             new_lengths = [None] * len(new_slices)
