@@ -329,6 +329,12 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None, None, 2)
             ))
 
+        l = kenjutsu.len_slices(Ellipsis, 10)
+        self.assertEqual(
+            l,
+            (10,)
+        )
+
         l = kenjutsu.len_slices(slice(None), 10)
         self.assertEqual(
             l,
@@ -353,6 +359,67 @@ class TestKenjutsu(unittest.TestCase):
         self.assertEqual(
             l,
             (10, 10, 5, 10)
+        )
+
+        l = kenjutsu.len_slices(
+            Ellipsis,
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            l,
+            (2, 3, 4, 5)
+        )
+
+        l = kenjutsu.len_slices(
+            (
+                Ellipsis,
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            l,
+            (2, 3, 4, 1)
+        )
+
+        l = kenjutsu.len_slices(
+            (
+                slice(0, 1),
+                Ellipsis
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            l,
+            (1, 3, 4, 5)
+        )
+
+        l = kenjutsu.len_slices(
+            (
+                slice(0, 1),
+                Ellipsis,
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            l,
+            (1, 3, 4, 1)
+        )
+
+        l = kenjutsu.len_slices(
+            (
+                slice(0, 1),
+                Ellipsis,
+                slice(0, 1),
+                slice(0, 1),
+                slice(0, 1)
+            ),
+            (2, 3, 4, 5)
+        )
+        self.assertEqual(
+            l,
+            (1, 1, 1, 1)
         )
 
 
