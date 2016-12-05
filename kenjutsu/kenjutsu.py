@@ -52,7 +52,9 @@ def reformat_slice(a_slice, a_length=None):
             slice(2, 9, 1)
     """
 
-    if not isinstance(a_slice, slice):
+    if a_slice is Ellipsis:
+        a_slice = slice(None)
+    elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
         )
@@ -158,22 +160,76 @@ def reformat_slices(slices, lengths=None):
         new_slices = (new_slices,)
 
     new_lengths = lengths
-    if new_lengths is None:
-        new_lengths = [None] * len(new_slices)
-
     try:
-        len(new_lengths)
+        if new_lengths is not None:
+            len(new_lengths)
     except TypeError:
         new_lengths = (new_lengths,)
 
-    if len(new_slices) != len(new_lengths):
-        raise ValueError("There must be an equal number of slices to lengths.")
+    el_idx = None
+    try:
+        el_idx = new_slices.index(Ellipsis)
+    except ValueError:
+        pass
 
-    new_slices = list(new_slices)
-    for i, each_length in enumerate(new_lengths):
-        new_slices[i] = reformat_slice(new_slices[i], each_length)
+    if new_lengths is not None and el_idx is None:
+        if len(new_slices) != len(new_lengths):
+            raise ValueError("Shape must be the same as the number of slices.")
+    elif new_lengths is not None:
+        if (len(new_slices) - 1) > len(new_lengths):
+            raise ValueError(
+                "Shape must be as large or larger than the number of slices"
+                " without the Ellipsis."
+            )
 
-    new_slices = tuple(new_slices)
+    if el_idx is not None:
+        # Break into three cases.
+        #
+        # 1. Before the Ellipsis
+        # 2. The Ellipsis
+        # 3. After the Ellipsis
+        #
+        # Cases 1 and 3 are trivially solved as before.
+        # Case 2 is either a no-op or a bunch of `slice(None)`s.
+        #
+        # The result is a combination of all of these.
+
+        slices_before = new_slices[:el_idx]
+        slices_after = new_slices[el_idx+1:]
+
+        if Ellipsis in slices_before or Ellipsis in slices_after:
+            raise ValueError("Only one Ellipsis is permitted. Found multiple.")
+
+        new_lengths_before = None
+        new_lengths_after = None
+        slice_el = (Ellipsis,)
+        if new_lengths is not None:
+            pos_before = len(slices_before)
+            pos_after = len(new_lengths) - len(slices_after)
+
+            new_lengths_before = new_lengths[:pos_before]
+            new_lengths_after = new_lengths[pos_after:]
+
+            new_lengths_el = new_lengths[pos_before:pos_after]
+            slice_el = reformat_slices(
+                len(new_lengths_el) * (slice(None),),
+                new_lengths_el
+            )
+
+        new_slices = (
+            reformat_slices(slices_before, new_lengths_before) +
+            slice_el +
+            reformat_slices(slices_after, new_lengths_after)
+        )
+    else:
+        if new_lengths is None:
+            new_lengths = [None] * len(new_slices)
+
+        new_slices = list(new_slices)
+        for i, each_length in enumerate(new_lengths):
+            new_slices[i] = reformat_slice(new_slices[i], each_length)
+
+        new_slices = tuple(new_slices)
 
     return(new_slices)
 
