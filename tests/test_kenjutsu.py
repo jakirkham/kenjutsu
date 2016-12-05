@@ -69,14 +69,16 @@ class TestKenjutsu(unittest.TestCase):
                             each_range[rf_slice]
                         )
 
-                        start = rf_slice.start
-                        stop = rf_slice.stop
-                        step = rf_slice.step
+                        new_start = rf_slice.start
+                        new_stop = rf_slice.stop
+                        new_step = rf_slice.step
 
-                        if step is not None and step < 0 and stop is None:
-                            stop = -1
+                        if (new_step is not None and
+                            new_step < 0 and
+                            new_stop is None):
+                            new_stop = -1
 
-                        l = float(stop - start)/float(step)
+                        l = float(new_stop - new_start)/float(new_step)
                         self.assertEqual(
                             int(math.ceil(l)),
                             len(each_range[a_slice])
