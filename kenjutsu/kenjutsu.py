@@ -52,19 +52,20 @@ def reformat_slice(a_slice, a_length=None):
             slice(2, 9, 1)
     """
 
-    if a_slice is Ellipsis:
-        a_slice = slice(None)
-    elif not isinstance(a_slice, slice):
+    new_slice = a_slice
+    if new_slice is Ellipsis:
+        new_slice = slice(None)
+    elif not isinstance(new_slice, slice):
         raise ValueError(
-            "Expected a `slice` type. Instead got `%s`." % str(a_slice)
+            "Expected a `slice` type. Instead got `%s`." % str(new_slice)
         )
 
-    if a_slice.step == 0:
+    if new_slice.step == 0:
         raise ValueError("Slice cannot have a step size of `0`.")
 
-    start = a_slice.start
-    stop = a_slice.stop
-    step = a_slice.step
+    start = new_slice.start
+    stop = new_slice.stop
+    step = new_slice.step
 
     # Fill unknown values.
     if step is None:
