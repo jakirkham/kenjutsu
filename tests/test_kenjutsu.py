@@ -6,6 +6,7 @@
 import doctest
 import itertools
 import math
+import operator
 import sys
 import unittest
 
@@ -46,6 +47,15 @@ class TestKenjutsu(unittest.TestCase):
             "Slice cannot have a step size of `0`."
         )
 
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice([None])
+
+        self.assertEqual(
+            str(e.exception),
+            "Arbitrary sequences not permitted."
+            " All elements must be of integral type."
+        )
+
         for size in [10, 11, 12]:
             excess = size + 3
             each_range = range(size)
@@ -83,6 +93,38 @@ class TestKenjutsu(unittest.TestCase):
                             int(math.ceil(l)),
                             len(each_range[a_slice])
                         )
+
+                        a_slice = list()
+                        a_slice.append(0 if start is None else start)
+                        a_slice.append(0 if stop is None else stop)
+                        a_slice.append(0 if step is None else step)
+
+                        a_op = operator.itemgetter(*a_slice)
+
+                        expected_result = None
+                        try:
+                            expected_result = a_op(each_range)
+                        except IndexError:
+                            pass
+
+                        if expected_result is not None:
+                            rf_slice = kenjutsu.reformat_slice(a_slice)
+                            rf_op = operator.itemgetter(*rf_slice)
+                            self.assertEqual(
+                                expected_result,
+                                rf_op(each_range)
+                            )
+
+                            rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                            rf_op = operator.itemgetter(*rf_slice)
+                            self.assertEqual(
+                                expected_result,
+                                rf_op(each_range)
+                            )
+                        else:
+                            kenjutsu.reformat_slice(a_slice)
+                            with self.assertRaises(IndexError):
+                                kenjutsu.reformat_slice(a_slice, size)
 
                 if start is not None:
                     a_slice = start
@@ -250,9 +292,10 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None),
                 slice(3, None),
                 slice(None, 5),
-                slice(None, None, 2)
+                slice(None, None, 2),
+                [-1, -2, -1, 1, 5]
             ),
-            (12, 10, 13, 15, 20)
+            (12, 10, 13, 15, 20, 10)
         )
         self.assertEqual(
             rf_slice,
@@ -261,7 +304,8 @@ class TestKenjutsu(unittest.TestCase):
                 slice(0, 10, 1),
                 slice(3, 13, 1),
                 slice(0, 5, 1),
-                slice(0, 20, 2)
+                slice(0, 20, 2),
+                [9, 8, 9, 1, 5]
             )
         )
 
@@ -372,6 +416,23 @@ class TestKenjutsu(unittest.TestCase):
                             len(each_range[a_slice])
                         )
 
+                        a_slice = list()
+                        a_slice.append(0 if start is None else start)
+                        a_slice.append(0 if stop is None else stop)
+                        a_slice.append(0 if step is None else step)
+
+                        a_op = operator.itemgetter(*a_slice)
+
+                        expected_result = None
+                        try:
+                            expected_result = a_op(each_range)
+                        except IndexError:
+                            pass
+
+                        if expected_result is not None:
+                            l = kenjutsu.len_slice(a_slice, size)
+                            self.assertEqual(len(expected_result), l)
+
                 if start is not None:
                     a_slice = start
 
@@ -428,13 +489,14 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None),
                 slice(3, None),
                 slice(None, 5),
-                slice(None, None, 2)
+                slice(None, None, 2),
+                [-1, -2, -1, 1, 5]
             ),
-            (12, 10, 13, 15, 20)
+            (12, 10, 13, 15, 20, 10)
         )
         self.assertEqual(
             l,
-            (10, 10, 5, 10)
+            (10, 10, 5, 10, 5)
         )
 
         l = kenjutsu.len_slices(

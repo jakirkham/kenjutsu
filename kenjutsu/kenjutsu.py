@@ -22,6 +22,7 @@ __author__ = "John Kirkham <kirkhamj@janelia.hhmi.org>"
 __date__ = "$Sep 08, 2016 15:46:46 EDT$"
 
 
+import collections
 import itertools
 import numbers
 import operator
@@ -61,6 +62,18 @@ def reformat_slice(a_slice, a_length=None):
             new_slice = slice(a_slice, a_slice-1, -1)
         else:
             new_slice = slice(a_slice, a_slice+1, 1)
+    elif isinstance(a_slice, collections.Sequence):
+        if not all(map(lambda i: isinstance(i, numbers.Integral), a_slice)):
+            raise ValueError(
+                "Arbitrary sequences not permitted."
+                " All elements must be of integral type."
+            )
+
+        # Normalize each integer in the range.
+        new_slice = []
+        for i in a_slice:
+            new_slice.append(reformat_slice(i, a_length))
+        return new_slice
     elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
@@ -304,18 +317,22 @@ def len_slice(a_slice, a_length=None):
 
     new_slice = reformat_slice(a_slice, a_length)
 
-    if new_slice.stop is None:
-        if new_slice.step > 0:
-            raise UnknownSliceLengthException(
-                "Cannot determine slice length without a defined end point. " +
-                "The reformatted slice was " + repr(new_slice) + "."
-            )
-        else:
-            new_slice = slice(new_slice.start, -1, new_slice.step)
+    new_slice_size = 0
+    if isinstance(new_slice, slice):
+        if new_slice.stop is None:
+            if new_slice.step > 0:
+                raise UnknownSliceLengthException(
+                    "Cannot determine slice length without a defined end"
+                    " point. The reformatted slice was %s." % repr(new_slice)
+                )
+            else:
+                new_slice = slice(new_slice.start, -1, new_slice.step)
 
-    new_slice_diff = float(new_slice.stop - new_slice.start)
+        new_slice_diff = float(new_slice.stop - new_slice.start)
 
-    new_slice_size = int(math.ceil(new_slice_diff / new_slice.step))
+        new_slice_size = int(math.ceil(new_slice_diff / new_slice.step))
+    else:
+        new_slice_size = len(new_slice)
 
     return(new_slice_size)
 
