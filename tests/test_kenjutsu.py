@@ -292,9 +292,10 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None),
                 slice(3, None),
                 slice(None, 5),
-                slice(None, None, 2)
+                slice(None, None, 2),
+                [-1, -2, -1, 1, 5]
             ),
-            (12, 10, 13, 15, 20)
+            (12, 10, 13, 15, 20, 10)
         )
         self.assertEqual(
             rf_slice,
@@ -303,7 +304,8 @@ class TestKenjutsu(unittest.TestCase):
                 slice(0, 10, 1),
                 slice(3, 13, 1),
                 slice(0, 5, 1),
-                slice(0, 20, 2)
+                slice(0, 20, 2),
+                [9, 8, 9, 1, 5]
             )
         )
 
