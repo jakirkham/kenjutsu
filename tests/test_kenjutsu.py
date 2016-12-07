@@ -489,13 +489,14 @@ class TestKenjutsu(unittest.TestCase):
                 slice(None),
                 slice(3, None),
                 slice(None, 5),
-                slice(None, None, 2)
+                slice(None, None, 2),
+                [-1, -2, -1, 1, 5]
             ),
-            (12, 10, 13, 15, 20)
+            (12, 10, 13, 15, 20, 10)
         )
         self.assertEqual(
             l,
-            (10, 10, 5, 10)
+            (10, 10, 5, 10, 5)
         )
 
         l = kenjutsu.len_slices(
