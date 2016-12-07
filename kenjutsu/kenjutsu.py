@@ -317,18 +317,22 @@ def len_slice(a_slice, a_length=None):
 
     new_slice = reformat_slice(a_slice, a_length)
 
-    if new_slice.stop is None:
-        if new_slice.step > 0:
-            raise UnknownSliceLengthException(
-                "Cannot determine slice length without a defined end point. " +
-                "The reformatted slice was " + repr(new_slice) + "."
-            )
-        else:
-            new_slice = slice(new_slice.start, -1, new_slice.step)
+    new_slice_size = 0
+    if isinstance(new_slice, slice):
+        if new_slice.stop is None:
+            if new_slice.step > 0:
+                raise UnknownSliceLengthException(
+                    "Cannot determine slice length without a defined end"
+                    " point. The reformatted slice was %s." % repr(new_slice)
+                )
+            else:
+                new_slice = slice(new_slice.start, -1, new_slice.step)
 
-    new_slice_diff = float(new_slice.stop - new_slice.start)
+        new_slice_diff = float(new_slice.stop - new_slice.start)
 
-    new_slice_size = int(math.ceil(new_slice_diff / new_slice.step))
+        new_slice_size = int(math.ceil(new_slice_diff / new_slice.step))
+    else:
+        new_slice_size = len(new_slice)
 
     return(new_slice_size)
 

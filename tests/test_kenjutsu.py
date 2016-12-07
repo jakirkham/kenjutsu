@@ -414,6 +414,23 @@ class TestKenjutsu(unittest.TestCase):
                             len(each_range[a_slice])
                         )
 
+                        a_slice = list()
+                        a_slice.append(0 if start is None else start)
+                        a_slice.append(0 if stop is None else stop)
+                        a_slice.append(0 if step is None else step)
+
+                        a_op = operator.itemgetter(*a_slice)
+
+                        expected_result = None
+                        try:
+                            expected_result = a_op(each_range)
+                        except IndexError:
+                            pass
+
+                        if expected_result is not None:
+                            l = kenjutsu.len_slice(a_slice, size)
+                            self.assertEqual(len(expected_result), l)
+
                 if start is not None:
                     a_slice = start
 
