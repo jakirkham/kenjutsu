@@ -22,6 +22,7 @@ __author__ = "John Kirkham <kirkhamj@janelia.hhmi.org>"
 __date__ = "$Sep 08, 2016 15:46:46 EDT$"
 
 
+import collections
 import itertools
 import numbers
 import operator
@@ -61,6 +62,18 @@ def reformat_slice(a_slice, a_length=None):
             new_slice = slice(a_slice, a_slice-1, -1)
         else:
             new_slice = slice(a_slice, a_slice+1, 1)
+    elif isinstance(a_slice, collections.Sequence):
+        if not all(map(lambda i: isinstance(i, numbers.Integral), a_slice)):
+            raise ValueError(
+                "Arbitrary sequences not permitted."
+                " All elements must be of integral type."
+            )
+
+        # Normalize each integer in the range.
+        new_slice = []
+        for i in a_slice:
+            new_slice.append(reformat_slice(i, a_length))
+        return new_slice
     elif not isinstance(a_slice, slice):
         raise ValueError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)

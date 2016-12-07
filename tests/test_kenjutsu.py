@@ -6,6 +6,7 @@
 import doctest
 import itertools
 import math
+import operator
 import sys
 import unittest
 
@@ -46,6 +47,15 @@ class TestKenjutsu(unittest.TestCase):
             "Slice cannot have a step size of `0`."
         )
 
+        with self.assertRaises(ValueError) as e:
+            kenjutsu.reformat_slice([None])
+
+        self.assertEqual(
+            str(e.exception),
+            "Arbitrary sequences not permitted."
+            " All elements must be of integral type."
+        )
+
         for size in [10, 11, 12]:
             excess = size + 3
             each_range = range(size)
@@ -83,6 +93,38 @@ class TestKenjutsu(unittest.TestCase):
                             int(math.ceil(l)),
                             len(each_range[a_slice])
                         )
+
+                        a_slice = list()
+                        a_slice.append(0 if start is None else start)
+                        a_slice.append(0 if stop is None else stop)
+                        a_slice.append(0 if step is None else step)
+
+                        a_op = operator.itemgetter(*a_slice)
+
+                        expected_result = None
+                        try:
+                            expected_result = a_op(each_range)
+                        except IndexError:
+                            pass
+
+                        if expected_result is not None:
+                            rf_slice = kenjutsu.reformat_slice(a_slice)
+                            rf_op = operator.itemgetter(*rf_slice)
+                            self.assertEqual(
+                                expected_result,
+                                rf_op(each_range)
+                            )
+
+                            rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                            rf_op = operator.itemgetter(*rf_slice)
+                            self.assertEqual(
+                                expected_result,
+                                rf_op(each_range)
+                            )
+                        else:
+                            kenjutsu.reformat_slice(a_slice)
+                            with self.assertRaises(IndexError):
+                                kenjutsu.reformat_slice(a_slice, size)
 
                 if start is not None:
                     a_slice = start
