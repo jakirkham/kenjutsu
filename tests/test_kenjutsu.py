@@ -97,6 +97,14 @@ class TestKenjutsu(unittest.TestCase):
                             int(math.ceil(l)),
                             len(each_range[a_slice])
                         )
+                        self.assertEqual(
+                            l,
+                            int(l)
+                        )
+                        self.assertEqual(
+                            l,
+                            len(range(size)[a_slice])
+                        )
 
                         a_slice = list()
                         a_slice.append(0 if start is None else start)
