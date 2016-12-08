@@ -30,7 +30,7 @@ import math
 import warnings
 
 
-def reformat_slice(a_slice, a_length=None):
+def _reformat_slice(a_slice, a_length=None):
     """
         Takes a slice and reformats it to fill in as many undefined values as
         possible.
@@ -47,10 +47,10 @@ def reformat_slice(a_slice, a_length=None):
 
         Examples:
 
-            >>> reformat_slice(slice(2, -1, None))
+            >>> _reformat_slice(slice(2, -1, None))
             slice(2, -1, 1)
 
-            >>> reformat_slice(slice(2, -1, None), 10)
+            >>> _reformat_slice(slice(2, -1, None), 10)
             slice(2, 9, 1)
     """
 
@@ -72,7 +72,7 @@ def reformat_slice(a_slice, a_length=None):
         # Normalize each integer in the range.
         new_slice = []
         for i in a_slice:
-            new_slice.append(reformat_slice(i, a_length))
+            new_slice.append(_reformat_slice(i, a_length))
         return new_slice
     elif not isinstance(a_slice, slice):
         raise ValueError(
@@ -268,7 +268,7 @@ def reformat_slices(slices, lengths=None):
 
         new_slices = list(new_slices)
         for i, each_length in enumerate(new_lengths):
-            new_slices[i] = reformat_slice(new_slices[i], each_length)
+            new_slices[i] = _reformat_slice(new_slices[i], each_length)
 
         new_slices = tuple(new_slices)
 
@@ -283,7 +283,7 @@ class UnknownSliceLengthException(Exception):
     pass
 
 
-def len_slice(a_slice, a_length=None):
+def _len_slice(a_slice, a_length=None):
     """
         Determines how many elements a slice will contain.
 
@@ -303,10 +303,10 @@ def len_slice(a_slice, a_length=None):
 
         Examples:
 
-            >>> len_slice(slice(2, None), 10)
+            >>> _len_slice(slice(2, None), 10)
             8
 
-            >>> len_slice(slice(2, 6))
+            >>> _len_slice(slice(2, 6))
             4
     """
 
@@ -315,7 +315,7 @@ def len_slice(a_slice, a_length=None):
             "An integral index does not provide an object with a length."
         )
 
-    new_slice = reformat_slice(a_slice, a_length)
+    new_slice = _reformat_slice(a_slice, a_length)
 
     new_slice_size = 0
     if isinstance(new_slice, slice):
@@ -370,7 +370,7 @@ def len_slices(slices, lengths=None):
 
     for each_slice in new_slices:
         if not isinstance(each_slice, numbers.Integral):
-            lens.append(len_slice(each_slice))
+            lens.append(_len_slice(each_slice))
 
     lens = tuple(lens)
 

@@ -33,9 +33,9 @@ class TestCore(unittest.TestCase):
         pass
 
 
-    def test_reformat_slice(self):
+    def test__reformat_slice(self):
         with self.assertRaises(ValueError) as e:
-            core.reformat_slice(None)
+            core._reformat_slice(None)
 
         self.assertEqual(
             str(e.exception),
@@ -43,7 +43,7 @@ class TestCore(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            core.reformat_slice(slice(None, None, 0))
+            core._reformat_slice(slice(None, None, 0))
 
         self.assertEqual(
             str(e.exception),
@@ -51,7 +51,7 @@ class TestCore(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            core.reformat_slice([None])
+            core._reformat_slice([None])
 
         self.assertEqual(
             str(e.exception),
@@ -70,13 +70,13 @@ class TestCore(unittest.TestCase):
 
                         a_slice = slice(start, stop, step)
 
-                        rf_slice = core.reformat_slice(a_slice)
+                        rf_slice = core._reformat_slice(a_slice)
                         self.assertEqual(
                             each_range[a_slice],
                             each_range[rf_slice]
                         )
 
-                        rf_slice = core.reformat_slice(a_slice, size)
+                        rf_slice = core._reformat_slice(a_slice, size)
                         self.assertEqual(
                             each_range[a_slice],
                             each_range[rf_slice]
@@ -111,23 +111,23 @@ class TestCore(unittest.TestCase):
                             pass
 
                         if expected_result is not None:
-                            rf_slice = core.reformat_slice(a_slice)
+                            rf_slice = core._reformat_slice(a_slice)
                             rf_op = operator.itemgetter(*rf_slice)
                             self.assertEqual(
                                 expected_result,
                                 rf_op(each_range)
                             )
 
-                            rf_slice = core.reformat_slice(a_slice, size)
+                            rf_slice = core._reformat_slice(a_slice, size)
                             rf_op = operator.itemgetter(*rf_slice)
                             self.assertEqual(
                                 expected_result,
                                 rf_op(each_range)
                             )
                         else:
-                            core.reformat_slice(a_slice)
+                            core._reformat_slice(a_slice)
                             with self.assertRaises(IndexError):
-                                core.reformat_slice(a_slice, size)
+                                core._reformat_slice(a_slice, size)
 
                 if start is not None:
                     a_slice = start
@@ -139,41 +139,41 @@ class TestCore(unittest.TestCase):
                         pass
 
                     if expected_result is not None:
-                        rf_slice = core.reformat_slice(a_slice)
+                        rf_slice = core._reformat_slice(a_slice)
                         self.assertEqual(
                             expected_result,
                             each_range[rf_slice]
                         )
 
-                        rf_slice = core.reformat_slice(a_slice, size)
+                        rf_slice = core._reformat_slice(a_slice, size)
                         self.assertEqual(
                             expected_result,
                             each_range[rf_slice]
                         )
                     else:
-                        core.reformat_slice(a_slice)
+                        core._reformat_slice(a_slice)
                         with self.assertRaises(IndexError):
-                            core.reformat_slice(a_slice, size)
+                            core._reformat_slice(a_slice, size)
 
-            rf_slice = core.reformat_slice(Ellipsis)
+            rf_slice = core._reformat_slice(Ellipsis)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = core.reformat_slice(Ellipsis, size)
+            rf_slice = core._reformat_slice(Ellipsis, size)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = core.reformat_slice(tuple())
+            rf_slice = core._reformat_slice(tuple())
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = core.reformat_slice(tuple(), size)
+            rf_slice = core._reformat_slice(tuple(), size)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
@@ -399,9 +399,9 @@ class TestCore(unittest.TestCase):
         )
 
 
-    def test_len_slice(self):
+    def test__len_slice(self):
         with self.assertRaises(core.UnknownSliceLengthException):
-            core.len_slice(slice(None))
+            core._len_slice(slice(None))
 
         for size in [10, 11, 12]:
             excess = size + 3
@@ -413,7 +413,7 @@ class TestCore(unittest.TestCase):
 
                         a_slice = slice(start, stop, step)
 
-                        l = core.len_slice(a_slice, size)
+                        l = core._len_slice(a_slice, size)
                         self.assertEqual(
                             l,
                             len(each_range[a_slice])
@@ -433,22 +433,22 @@ class TestCore(unittest.TestCase):
                             pass
 
                         if expected_result is not None:
-                            l = core.len_slice(a_slice, size)
+                            l = core._len_slice(a_slice, size)
                             self.assertEqual(len(expected_result), l)
 
                 if start is not None:
                     a_slice = start
 
                     with self.assertRaises(TypeError):
-                        core.len_slice(a_slice, size)
+                        core._len_slice(a_slice, size)
 
             self.assertEqual(
-                core.len_slice(Ellipsis, size),
+                core._len_slice(Ellipsis, size),
                 len(each_range[:])
             )
 
             self.assertEqual(
-                core.len_slice(tuple(), size),
+                core._len_slice(tuple(), size),
                 len(each_range[:])
             )
 

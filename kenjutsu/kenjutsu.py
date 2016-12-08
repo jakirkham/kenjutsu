@@ -53,7 +53,7 @@ def reformat_slice(a_slice, a_length=None):
 
     from kenjutsu import core
 
-    return core.reformat_slice(a_slice, a_length)
+    return core._reformat_slice(a_slice, a_length)
 
 
 def reformat_slices(slices, lengths=None):
@@ -138,7 +138,7 @@ def len_slice(a_slice, a_length=None):
 
     from kenjutsu import core
 
-    return core.len_slice(a_slice, a_length)
+    return core._len_slice(a_slice, a_length)
 
 
 def len_slices(slices, lengths=None):
