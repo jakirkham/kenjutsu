@@ -2,9 +2,8 @@
 
 # -*- coding: utf-8 -*-
 
-
 __author__ = "John Kirkham <kirkhamj@janelia.hhmi.org>"
-__date__ = "$Oct 02, 2016 15:38:07 EDT$"
+__date__ = "$Dec 08, 2016 11:35:58 GMT-0500$"
 
 
 import doctest
@@ -14,7 +13,7 @@ import operator
 import sys
 import unittest
 
-from kenjutsu import kenjutsu
+from kenjutsu import core
 
 
 try:
@@ -23,20 +22,20 @@ except NameError:
     irange = range
 
 
-# Load doctests from `kenjutsu`.
+# Load doctests from `core`.
 def load_tests(loader, tests, ignore):
-    tests.addTests(doctest.DocTestSuite(kenjutsu))
+    tests.addTests(doctest.DocTestSuite(core))
     return tests
 
 
-class TestKenjutsu(unittest.TestCase):
+class TestCore(unittest.TestCase):
     def setUp(self):
         pass
 
 
     def test_reformat_slice(self):
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slice(None)
+            core.reformat_slice(None)
 
         self.assertEqual(
             str(e.exception),
@@ -44,7 +43,7 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slice(slice(None, None, 0))
+            core.reformat_slice(slice(None, None, 0))
 
         self.assertEqual(
             str(e.exception),
@@ -52,7 +51,7 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slice([None])
+            core.reformat_slice([None])
 
         self.assertEqual(
             str(e.exception),
@@ -71,13 +70,13 @@ class TestKenjutsu(unittest.TestCase):
 
                         a_slice = slice(start, stop, step)
 
-                        rf_slice = kenjutsu.reformat_slice(a_slice)
+                        rf_slice = core.reformat_slice(a_slice)
                         self.assertEqual(
                             each_range[a_slice],
                             each_range[rf_slice]
                         )
 
-                        rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                        rf_slice = core.reformat_slice(a_slice, size)
                         self.assertEqual(
                             each_range[a_slice],
                             each_range[rf_slice]
@@ -112,23 +111,23 @@ class TestKenjutsu(unittest.TestCase):
                             pass
 
                         if expected_result is not None:
-                            rf_slice = kenjutsu.reformat_slice(a_slice)
+                            rf_slice = core.reformat_slice(a_slice)
                             rf_op = operator.itemgetter(*rf_slice)
                             self.assertEqual(
                                 expected_result,
                                 rf_op(each_range)
                             )
 
-                            rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                            rf_slice = core.reformat_slice(a_slice, size)
                             rf_op = operator.itemgetter(*rf_slice)
                             self.assertEqual(
                                 expected_result,
                                 rf_op(each_range)
                             )
                         else:
-                            kenjutsu.reformat_slice(a_slice)
+                            core.reformat_slice(a_slice)
                             with self.assertRaises(IndexError):
-                                kenjutsu.reformat_slice(a_slice, size)
+                                core.reformat_slice(a_slice, size)
 
                 if start is not None:
                     a_slice = start
@@ -140,41 +139,41 @@ class TestKenjutsu(unittest.TestCase):
                         pass
 
                     if expected_result is not None:
-                        rf_slice = kenjutsu.reformat_slice(a_slice)
+                        rf_slice = core.reformat_slice(a_slice)
                         self.assertEqual(
                             expected_result,
                             each_range[rf_slice]
                         )
 
-                        rf_slice = kenjutsu.reformat_slice(a_slice, size)
+                        rf_slice = core.reformat_slice(a_slice, size)
                         self.assertEqual(
                             expected_result,
                             each_range[rf_slice]
                         )
                     else:
-                        kenjutsu.reformat_slice(a_slice)
+                        core.reformat_slice(a_slice)
                         with self.assertRaises(IndexError):
-                            kenjutsu.reformat_slice(a_slice, size)
+                            core.reformat_slice(a_slice, size)
 
-            rf_slice = kenjutsu.reformat_slice(Ellipsis)
+            rf_slice = core.reformat_slice(Ellipsis)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = kenjutsu.reformat_slice(Ellipsis, size)
+            rf_slice = core.reformat_slice(Ellipsis, size)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = kenjutsu.reformat_slice(tuple())
+            rf_slice = core.reformat_slice(tuple())
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
             )
 
-            rf_slice = kenjutsu.reformat_slice(tuple(), size)
+            rf_slice = core.reformat_slice(tuple(), size)
             self.assertEqual(
                 each_range[:],
                 each_range[rf_slice]
@@ -196,7 +195,7 @@ class TestKenjutsu(unittest.TestCase):
 
     def test_reformat_slices(self):
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slices((slice(None),), (1, 2))
+            core.reformat_slices((slice(None),), (1, 2))
 
         self.assertEqual(
             str(e.exception),
@@ -204,7 +203,7 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slices(
+            core.reformat_slices(
                 (slice(None), slice(None), Ellipsis), (1,)
             )
 
@@ -215,7 +214,7 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slices(
+            core.reformat_slices(
                 (Ellipsis, Ellipsis), (1,)
             )
 
@@ -224,55 +223,55 @@ class TestKenjutsu(unittest.TestCase):
             "Only one Ellipsis is permitted. Found multiple."
         )
 
-        rf_slice = kenjutsu.reformat_slices(slice(None))
+        rf_slice = core.reformat_slices(slice(None))
         self.assertEqual(
             rf_slice,
             (slice(0, None, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices((slice(None),))
+        rf_slice = core.reformat_slices((slice(None),))
         self.assertEqual(
             rf_slice,
             (slice(0, None, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices(Ellipsis)
+        rf_slice = core.reformat_slices(Ellipsis)
         self.assertEqual(
             rf_slice,
             (Ellipsis,)
         )
 
-        rf_slice = kenjutsu.reformat_slices(Ellipsis, 10)
+        rf_slice = core.reformat_slices(Ellipsis, 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices(tuple())
+        rf_slice = core.reformat_slices(tuple())
         self.assertEqual(
             rf_slice,
             (Ellipsis,)
         )
 
-        rf_slice = kenjutsu.reformat_slices(tuple(), 10)
+        rf_slice = core.reformat_slices(tuple(), 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices(slice(None), 10)
+        rf_slice = core.reformat_slices(slice(None), 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices((slice(None),), 10)
+        rf_slice = core.reformat_slices((slice(None),), 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
         )
 
-        rf_slice = kenjutsu.reformat_slices((
+        rf_slice = core.reformat_slices((
             -1,
             slice(None),
             slice(3, None),
@@ -290,7 +289,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             (
                 -1,
                 slice(None),
@@ -313,7 +312,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             Ellipsis,
             (2, 3, 4, 5)
         )
@@ -327,7 +326,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             (
                 Ellipsis,
                 slice(0, 1)
@@ -344,7 +343,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             (
                 slice(0, 1),
                 Ellipsis
@@ -361,7 +360,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             (
                 slice(0, 1),
                 Ellipsis,
@@ -379,7 +378,7 @@ class TestKenjutsu(unittest.TestCase):
             )
         )
 
-        rf_slice = kenjutsu.reformat_slices(
+        rf_slice = core.reformat_slices(
             (
                 slice(0, 1),
                 Ellipsis,
@@ -401,8 +400,8 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_len_slice(self):
-        with self.assertRaises(kenjutsu.UnknownSliceLengthException):
-            kenjutsu.len_slice(slice(None))
+        with self.assertRaises(core.UnknownSliceLengthException):
+            core.len_slice(slice(None))
 
         for size in [10, 11, 12]:
             excess = size + 3
@@ -414,7 +413,7 @@ class TestKenjutsu(unittest.TestCase):
 
                         a_slice = slice(start, stop, step)
 
-                        l = kenjutsu.len_slice(a_slice, size)
+                        l = core.len_slice(a_slice, size)
                         self.assertEqual(
                             l,
                             len(each_range[a_slice])
@@ -434,60 +433,60 @@ class TestKenjutsu(unittest.TestCase):
                             pass
 
                         if expected_result is not None:
-                            l = kenjutsu.len_slice(a_slice, size)
+                            l = core.len_slice(a_slice, size)
                             self.assertEqual(len(expected_result), l)
 
                 if start is not None:
                     a_slice = start
 
                     with self.assertRaises(TypeError):
-                        kenjutsu.len_slice(a_slice, size)
+                        core.len_slice(a_slice, size)
 
             self.assertEqual(
-                kenjutsu.len_slice(Ellipsis, size),
+                core.len_slice(Ellipsis, size),
                 len(each_range[:])
             )
 
             self.assertEqual(
-                kenjutsu.len_slice(tuple(), size),
+                core.len_slice(tuple(), size),
                 len(each_range[:])
             )
 
 
     def test_len_slices(self):
-        with self.assertRaises(kenjutsu.UnknownSliceLengthException):
-            kenjutsu.len_slices((
+        with self.assertRaises(core.UnknownSliceLengthException):
+            core.len_slices((
                 slice(None),
                 slice(3, None),
                 slice(None, 5),
                 slice(None, None, 2)
             ))
 
-        l = kenjutsu.len_slices(Ellipsis, 10)
+        l = core.len_slices(Ellipsis, 10)
         self.assertEqual(
             l,
             (10,)
         )
 
-        l = kenjutsu.len_slices(tuple(), 10)
+        l = core.len_slices(tuple(), 10)
         self.assertEqual(
             l,
             (10,)
         )
 
-        l = kenjutsu.len_slices(slice(None), 10)
+        l = core.len_slices(slice(None), 10)
         self.assertEqual(
             l,
             (10,)
         )
 
-        l = kenjutsu.len_slices((slice(None),), 10)
+        l = core.len_slices((slice(None),), 10)
         self.assertEqual(
             l,
             (10,)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             (
                 -1,
                 slice(None),
@@ -503,7 +502,7 @@ class TestKenjutsu(unittest.TestCase):
             (10, 10, 5, 10, 5)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             Ellipsis,
             (2, 3, 4, 5)
         )
@@ -512,7 +511,7 @@ class TestKenjutsu(unittest.TestCase):
             (2, 3, 4, 5)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             (
                 Ellipsis,
                 slice(0, 1)
@@ -524,7 +523,7 @@ class TestKenjutsu(unittest.TestCase):
             (2, 3, 4, 1)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             (
                 slice(0, 1),
                 Ellipsis
@@ -536,7 +535,7 @@ class TestKenjutsu(unittest.TestCase):
             (1, 3, 4, 5)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             (
                 slice(0, 1),
                 Ellipsis,
@@ -549,7 +548,7 @@ class TestKenjutsu(unittest.TestCase):
             (1, 3, 4, 1)
         )
 
-        l = kenjutsu.len_slices(
+        l = core.len_slices(
             (
                 slice(0, 1),
                 Ellipsis,
@@ -567,7 +566,7 @@ class TestKenjutsu(unittest.TestCase):
 
     def test_split_blocks(self):
         with self.assertRaises(ValueError) as e:
-            kenjutsu.split_blocks((1,), (1, 2), (1, 2, 3))
+            core.split_blocks((1,), (1, 2), (1, 2, 3))
 
         self.assertEqual(
             str(e.exception),
@@ -576,7 +575,7 @@ class TestKenjutsu(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            kenjutsu.split_blocks((1,), (1, 2))
+            core.split_blocks((1,), (1, 2))
 
         self.assertEqual(
             str(e.exception),
@@ -584,7 +583,7 @@ class TestKenjutsu(unittest.TestCase):
             " same."
         )
 
-        blocks = kenjutsu.split_blocks((2,), (1,))
+        blocks = core.split_blocks((2,), (1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1),), (slice(1, 2, 1),)],
@@ -592,7 +591,7 @@ class TestKenjutsu(unittest.TestCase):
              [(slice(0, 1, 1),), (slice(0, 1, 1),)])
         )
 
-        blocks = kenjutsu.split_blocks((2,), (-1,))
+        blocks = core.split_blocks((2,), (-1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 2, 1),)],
@@ -600,7 +599,7 @@ class TestKenjutsu(unittest.TestCase):
              [(slice(0, 2, 1),)])
         )
 
-        blocks = kenjutsu.split_blocks((2, 3,), (1, 1,))
+        blocks = core.split_blocks((2, 3,), (1, 1,))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
@@ -623,7 +622,7 @@ class TestKenjutsu(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = kenjutsu.split_blocks((2, 3,), (1, 1,), (0, 0))
+        blocks = core.split_blocks((2, 3,), (1, 1,), (0, 0))
         self.assertEqual(
             blocks,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
@@ -646,7 +645,7 @@ class TestKenjutsu(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = kenjutsu.split_blocks((10, 12,), (3, 2,), (4, 3,))
+        blocks = core.split_blocks((10, 12,), (3, 2,), (4, 3,))
         self.assertEqual(
             blocks,
             ([(slice(0, 3, 1), slice(0, 2, 1)),
