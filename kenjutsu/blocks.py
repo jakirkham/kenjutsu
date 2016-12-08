@@ -12,6 +12,32 @@ import warnings
 import kenjutsu.format
 
 
+def reslice(slices, subslices, lengths=None):
+    """
+        Reslice an existing slice.
+
+        Args:
+
+            slices(tuple of slices):        The initial slice applied
+
+            subslices(tuple of slices):     The next slice applied
+
+            lengths(tuple of ints):         The shape of the object being
+                                            sliced.
+
+        Returns:
+            tuples of slices:               The resulting slicing of applying
+                                            the two slices in order.
+
+        Examples:
+
+            >>> reslice(slice(0, 10), slice(None, None, 2))
+            (slice(0, 10, 2))
+    """
+
+    pass
+
+
 def split_blocks(space_shape, block_shape, block_halo=None):
     """
         Return a list of slicings to cut each block out of an array or other.
