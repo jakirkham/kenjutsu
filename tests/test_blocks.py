@@ -6,7 +6,7 @@ import doctest
 import sys
 import unittest
 
-from kenjutsu import divide
+from kenjutsu import blocks
 
 
 try:
@@ -15,20 +15,20 @@ except NameError:
     irange = range
 
 
-# Load doctests from `divide`.
+# Load doctests from `blocks`.
 def load_tests(loader, tests, ignore):
-    tests.addTests(doctest.DocTestSuite(divide))
+    tests.addTests(doctest.DocTestSuite(blocks))
     return tests
 
 
-class TestDivide(unittest.TestCase):
+class TestBlocks(unittest.TestCase):
     def setUp(self):
         pass
 
 
     def test_split_blocks(self):
         with self.assertRaises(ValueError) as e:
-            divide.split_blocks((1,), (1, 2), (1, 2, 3))
+            blocks.split_blocks((1,), (1, 2), (1, 2, 3))
 
         self.assertEqual(
             str(e.exception),
@@ -37,7 +37,7 @@ class TestDivide(unittest.TestCase):
         )
 
         with self.assertRaises(ValueError) as e:
-            divide.split_blocks((1,), (1, 2))
+            blocks.split_blocks((1,), (1, 2))
 
         self.assertEqual(
             str(e.exception),
@@ -45,25 +45,25 @@ class TestDivide(unittest.TestCase):
             " same."
         )
 
-        blocks = divide.split_blocks((2,), (1,))
+        result = blocks.split_blocks((2,), (1,))
         self.assertEqual(
-            blocks,
+            result,
             ([(slice(0, 1, 1),), (slice(1, 2, 1),)],
              [(slice(0, 1, 1),), (slice(1, 2, 1),)],
              [(slice(0, 1, 1),), (slice(0, 1, 1),)])
         )
 
-        blocks = divide.split_blocks((2,), (-1,))
+        result = blocks.split_blocks((2,), (-1,))
         self.assertEqual(
-            blocks,
+            result,
             ([(slice(0, 2, 1),)],
              [(slice(0, 2, 1),)],
              [(slice(0, 2, 1),)])
         )
 
-        blocks = divide.split_blocks((2, 3,), (1, 1,))
+        result = blocks.split_blocks((2, 3,), (1, 1,))
         self.assertEqual(
-            blocks,
+            result,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
               (slice(0, 1, 1), slice(1, 2, 1)),
               (slice(0, 1, 1), slice(2, 3, 1)),
@@ -84,9 +84,9 @@ class TestDivide(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = divide.split_blocks((2, 3,), (1, 1,), (0, 0))
+        result = blocks.split_blocks((2, 3,), (1, 1,), (0, 0))
         self.assertEqual(
-            blocks,
+            result,
             ([(slice(0, 1, 1), slice(0, 1, 1)),
               (slice(0, 1, 1), slice(1, 2, 1)),
               (slice(0, 1, 1), slice(2, 3, 1)),
@@ -107,9 +107,9 @@ class TestDivide(unittest.TestCase):
               (slice(0, 1, 1), slice(0, 1, 1))])
         )
 
-        blocks = divide.split_blocks((10, 12,), (3, 2,), (4, 3,))
+        result = blocks.split_blocks((10, 12,), (3, 2,), (4, 3,))
         self.assertEqual(
-            blocks,
+            result,
             ([(slice(0, 3, 1), slice(0, 2, 1)),
               (slice(0, 3, 1), slice(2, 4, 1)),
               (slice(0, 3, 1), slice(4, 6, 1)),

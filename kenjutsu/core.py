@@ -25,7 +25,7 @@ __author__ = "John Kirkham <kirkhamj@janelia.hhmi.org>"
 __date__ = "$Dec 08, 2016 11:35:58 GMT-0500$"
 
 
-import kenjutsu.divide
+import kenjutsu.blocks
 import kenjutsu.format
 import kenjutsu.measure
 
@@ -37,4 +37,4 @@ UnknownSliceLengthException = kenjutsu.measure.UnknownSliceLengthException
 len_slice = kenjutsu.measure.len_slice
 len_slices = kenjutsu.measure.len_slices
 
-split_blocks = kenjutsu.divide.split_blocks
+split_blocks = kenjutsu.blocks.split_blocks
