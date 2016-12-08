@@ -182,8 +182,8 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         trimmed_halos_per_dim.append(a_trimmed_halo)
 
     # Take all combinations of all ranges to get blocks.
-    blocks = list(itertools.product(*ranges_per_dim))
+    orig_blocks = list(itertools.product(*ranges_per_dim))
     haloed_blocks = list(itertools.product(*haloed_ranges_per_dim))
     trimmed_halos = list(itertools.product(*trimmed_halos_per_dim))
 
-    return(blocks, haloed_blocks, trimmed_halos)
+    return(orig_blocks, haloed_blocks, trimmed_halos)
