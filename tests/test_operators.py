@@ -47,7 +47,8 @@ class TestOperators(unittest.TestCase):
                         rv_slice = operators.reverse_slice(a_slice, size)
                         self.assertEqual(
                             each_range[a_slice][::-1],
-                            each_range[rv_slice]
+                            each_range[rv_slice],
+                            (a_slice, rv_slice)
                         )
 
                         a_slice = list()
