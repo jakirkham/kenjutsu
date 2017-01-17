@@ -57,7 +57,7 @@ def len_slice(a_slice, a_length=None):
         if (new_slice.step > 0 and new_slice.start >= 0 and
                 (new_slice.stop is None or new_slice.stop < 0)):
                 raise UnknownSliceLengthException(
-                    "Cannot determine slice length without a defined start"
+                    "Cannot determine slice length without a defined end"
                     " point. The reformatted slice was %s." % repr(new_slice)
                 )
         elif (new_slice.step < 0 and new_slice.start < 0 and
