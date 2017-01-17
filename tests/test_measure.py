@@ -37,7 +37,13 @@ class TestMeasure(unittest.TestCase):
             measure.len_slice(slice(None))
 
         with self.assertRaises(measure.UnknownSliceLengthException):
+            measure.len_slice(slice(0, -1, 1))
+
+        with self.assertRaises(measure.UnknownSliceLengthException):
             measure.len_slice(slice(None, None, -1))
+
+        with self.assertRaises(measure.UnknownSliceLengthException):
+            measure.len_slice(slice(-1, 1, -1))
 
         for size in [10, 11, 12]:
             excess = size + 3
