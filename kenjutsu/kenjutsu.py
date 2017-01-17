@@ -1,5 +1,7 @@
 """
-The module ``kenjutsu.kenjutsu`` is deprecated. Please use ``kenjutsu.core``.
+Warning:
+    The module ``kenjutsu.kenjutsu`` is deprecated. Please use
+    ``kenjutsu.core`` instead.
 """
 
 from __future__ import absolute_import
