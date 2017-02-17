@@ -4,6 +4,6 @@ channels:
   - conda-forge
 
 dependencies:
-  - pip==8.1.2
+  - pip==9.0.1
   - wheel==0.29.0
   - Sphinx==1.5.1
