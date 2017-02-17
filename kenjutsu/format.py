@@ -11,7 +11,7 @@ def index_to_slice(index):
         Convert an index to a slice.
 
         Note:
-            A single index behaves differently from a length 1 slice. When
+            A single index behaves differently from a length 1 ``slice``. When
             applying the former one reduces that dimension; whereas, applying
             the latter results in a singleton dimension being retained.
 
