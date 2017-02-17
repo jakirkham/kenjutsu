@@ -28,6 +28,86 @@ class TestFormat(unittest.TestCase):
         pass
 
 
+    def test_index_to_slice(self):
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice(None)
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `None`."
+        )
+
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice(2.5)
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `2.5`."
+        )
+
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice((0,))
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `(0,)`."
+        )
+
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice([0, 1])
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `[0, 1]`."
+        )
+
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice(slice(None))
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `slice(None, None, None)`."
+        )
+
+        with self.assertRaises(TypeError) as e:
+            format.index_to_slice(Ellipsis)
+
+        self.assertEqual(
+            str(e.exception),
+            "Expected an integral type. Instead got `Ellipsis`."
+        )
+
+        for size in [10, 11, 12]:
+            excess = size + 3
+            each_range = range(size)
+
+            for index in itertools.chain(irange(-excess, excess)):
+                expected_result = []
+                try:
+                    expected_result = [each_range[index]]
+                except IndexError:
+                    pass
+
+                rf_slice = format.index_to_slice(index)
+
+                self.assertIsInstance(rf_slice, slice)
+
+                result = list(each_range[rf_slice])
+                self.assertEqual(result, expected_result)
+
+                start = rf_slice.start
+                stop = rf_slice.stop
+                step = rf_slice.step
+
+                self.assertEqual(int(math.copysign(1, index)), step)
+
+                l = float(stop - start)/float(step)
+                self.assertEqual(
+                    int(math.ceil(l)),
+                    1
+                )
+
+
     def test_reformat_slice(self):
         with self.assertRaises(ValueError) as e:
             format.reformat_slice(None)

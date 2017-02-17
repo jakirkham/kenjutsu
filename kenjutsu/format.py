@@ -6,6 +6,40 @@ import collections
 import numbers
 
 
+def index_to_slice(index):
+    """
+        Convert an index to a slice.
+
+        Note:
+            A single index behaves differently from a length 1 slice. When
+            applying the former one reduces that dimension; whereas, applying
+            the latter results in a singleton dimension being retained.
+
+        Args:
+            index(int):                  an index to convert to a slice
+
+        Returns:
+            (slice):                     a slice corresponding to the index
+
+        Examples:
+
+            >>> index_to_slice(1)
+            slice(1, 2, 1)
+
+            >>> index_to_slice(-1)
+            slice(-1, -2, -1)
+    """
+
+    if not isinstance(index, numbers.Integral):
+        raise TypeError(
+            "Expected an integral type. Instead got `%s`." % str(index)
+        )
+
+    step = -1 if index < 0 else 1
+
+    return slice(index, index + step, step)
+
+
 def reformat_slice(a_slice, a_length=None):
     """
         Takes a slice and reformats it to fill in as many undefined values as
@@ -34,10 +68,7 @@ def reformat_slice(a_slice, a_length=None):
     if (new_slice is Ellipsis) or (new_slice == tuple()):
         new_slice = slice(None)
     elif isinstance(a_slice, numbers.Integral):
-        if a_slice < 0:
-            new_slice = slice(a_slice, a_slice-1, -1)
-        else:
-            new_slice = slice(a_slice, a_slice+1, 1)
+        new_slice = index_to_slice(a_slice)
     elif isinstance(a_slice, collections.Sequence):
         if not all(map(lambda i: isinstance(i, numbers.Integral), a_slice)):
             raise ValueError(
