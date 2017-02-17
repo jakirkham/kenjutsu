@@ -13,7 +13,10 @@ def index_to_slice(index):
         Note:
             A single index behaves differently from a length 1 ``slice``. When
             applying the former one reduces that dimension; whereas, applying
-            the latter results in a singleton dimension being retained.
+            the latter results in a singleton dimension being retained. Also
+            if an index is out of bounds, one gets an ``IndexError``. However,
+            with an out of bounds length 1 ``slice``, one simply doesn't get
+            the requested range.
 
         Args:
             index(int):                  an index to convert to a slice
