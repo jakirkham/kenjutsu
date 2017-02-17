@@ -68,10 +68,7 @@ def reformat_slice(a_slice, a_length=None):
     if (new_slice is Ellipsis) or (new_slice == tuple()):
         new_slice = slice(None)
     elif isinstance(a_slice, numbers.Integral):
-        if a_slice < 0:
-            new_slice = slice(a_slice, a_slice-1, -1)
-        else:
-            new_slice = slice(a_slice, a_slice+1, 1)
+        new_slice = index_to_slice(a_slice)
     elif isinstance(a_slice, collections.Sequence):
         if not all(map(lambda i: isinstance(i, numbers.Integral), a_slice)):
             raise ValueError(
