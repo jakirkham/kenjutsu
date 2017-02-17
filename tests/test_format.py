@@ -482,3 +482,70 @@ class TestFormat(unittest.TestCase):
                 slice(0, 1, 1)
             )
         )
+
+
+    def test_split_indices(self):
+        with self.assertRaises(ValueError) as e:
+            format.split_indices(
+                ([0, 1], [0, 1]),
+            )
+
+        self.assertEqual(
+            str(e.exception),
+            "Only one integral sequence supported. Instead got `2`."
+        )
+
+        sp_slice = format.split_indices(
+            (3, Ellipsis, 0, slice(2, 5, 1), -1)
+        )
+        self.assertEqual(
+            sp_slice,
+            [
+                (3, Ellipsis, 0, slice(2, 5, 1), -1)
+            ]
+        )
+
+        sp_slice = format.split_indices(
+            (3, Ellipsis, 0, slice(2, 5, 1), [-1])
+        )
+        self.assertEqual(
+            sp_slice,
+            [
+                (3, Ellipsis, 0, slice(2, 5, 1), slice(-1, -2, -1))
+            ]
+        )
+
+        sp_slice = format.split_indices(
+            (3, Ellipsis, [0], slice(2, 5, 1), -1)
+        )
+        self.assertEqual(
+            sp_slice,
+            [
+                (3, Ellipsis, slice(0, 1, 1), slice(2, 5, 1), -1)
+            ]
+        )
+
+        sp_slice = format.split_indices(
+            (3, Ellipsis, [0, 1, 2], slice(2, 5, 1), -1)
+        )
+        self.assertEqual(
+            sp_slice,
+            [
+                (3, Ellipsis, slice(0, 1, 1), slice(2, 5, 1), -1),
+                (3, Ellipsis, slice(1, 2, 1), slice(2, 5, 1), -1),
+                (3, Ellipsis, slice(2, 3, 1), slice(2, 5, 1), -1)
+            ]
+        )
+
+        sp_slice = format.split_indices(
+            (3, Ellipsis, [2, 0, 1, 2], slice(2, 5, 1), -1)
+        )
+        self.assertEqual(
+            sp_slice,
+            [
+                (3, Ellipsis, slice(2, 3, 1), slice(2, 5, 1), -1),
+                (3, Ellipsis, slice(0, 1, 1), slice(2, 5, 1), -1),
+                (3, Ellipsis, slice(1, 2, 1), slice(2, 5, 1), -1),
+                (3, Ellipsis, slice(2, 3, 1), slice(2, 5, 1), -1)
+            ]
+        )
