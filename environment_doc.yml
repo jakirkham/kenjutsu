@@ -1,0 +1,9 @@
+name: kenjutsu_env
+
+channels:
+  - conda-forge
+
+dependencies:
+  - pip==8.1.2
+  - wheel==0.29.0
+  - Sphinx==1.5.1
