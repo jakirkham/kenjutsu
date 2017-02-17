@@ -298,6 +298,16 @@ class TestFormat(unittest.TestCase):
             "Only one Ellipsis is permitted. Found multiple."
         )
 
+        with self.assertRaises(ValueError) as e:
+            format.reformat_slices(
+                ([0, 1], [0, 1]),
+            )
+
+        self.assertEqual(
+            str(e.exception),
+            "Only one integral sequence supported. Instead got `2`."
+        )
+
         rf_slice = format.reformat_slices(slice(None))
         self.assertEqual(
             rf_slice,

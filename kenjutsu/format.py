@@ -282,4 +282,13 @@ def reformat_slices(slices, lengths=None):
 
         new_slices = tuple(new_slices)
 
+    n_seqs = sum(map(
+        lambda i: isinstance(i, collections.Sequence), new_slices
+    ))
+    if n_seqs > 1:
+        raise ValueError(
+            "Only one integral sequence supported."
+            " Instead got `%s`." % str(n_seqs)
+        )
+
     return(new_slices)
