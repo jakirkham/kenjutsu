@@ -35,7 +35,7 @@ class TestKenjutsu(unittest.TestCase):
 
 
     def test_reformat_slice(self):
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(TypeError) as e:
             kenjutsu.reformat_slice(None)
 
         self.assertEqual(
@@ -51,7 +51,7 @@ class TestKenjutsu(unittest.TestCase):
             "Slice cannot have a step size of `0`."
         )
 
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(TypeError) as e:
             kenjutsu.reformat_slice([None])
 
         self.assertEqual(

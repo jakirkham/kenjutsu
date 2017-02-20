@@ -75,7 +75,7 @@ def reformat_slice(a_slice, a_length=None):
         new_slice = index_to_slice(a_slice)
     elif isinstance(a_slice, collections.Sequence):
         if not all(map(lambda i: isinstance(i, numbers.Integral), a_slice)):
-            raise ValueError(
+            raise TypeError(
                 "Arbitrary sequences not permitted."
                 " All elements must be of integral type."
             )
@@ -86,7 +86,7 @@ def reformat_slice(a_slice, a_length=None):
             new_slice.append(reformat_slice(i, a_length))
         return new_slice
     elif not isinstance(a_slice, slice):
-        raise ValueError(
+        raise TypeError(
             "Expected a `slice` type. Instead got `%s`." % str(a_slice)
         )
 
