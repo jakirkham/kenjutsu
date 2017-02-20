@@ -114,7 +114,8 @@ class TestFormat(unittest.TestCase):
 
         self.assertEqual(
             str(e.exception),
-            "Expected a `slice` type. Instead got `None`."
+            "Expected an index acceptable type."
+            " Instead got, `None`."
         )
 
         with self.assertRaises(ValueError) as e:

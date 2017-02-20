@@ -87,7 +87,8 @@ def reformat_slice(a_slice, a_length=None):
         return new_slice
     elif not isinstance(a_slice, slice):
         raise TypeError(
-            "Expected a `slice` type. Instead got `%s`." % str(a_slice)
+            "Expected an index acceptable type."
+            " Instead got, `%s`." % str(a_slice)
         )
 
     if new_slice.step == 0:
