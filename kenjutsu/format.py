@@ -222,8 +222,13 @@ def reformat_slices(slices, lengths=None):
         pass
 
     if new_lengths is not None and el_idx is None:
-        if len(new_slices) != len(new_lengths):
-            raise ValueError("Shape must be the same as the number of slices.")
+        if len(new_slices) < len(new_lengths):
+            new_slices += (Ellipsis,)
+            el_idx = new_slices.index(Ellipsis)
+        elif len(new_slices) > len(new_lengths):
+            raise ValueError(
+                "Shape must be as large or larger than the number of slices."
+            )
     elif new_lengths is not None:
         if (len(new_slices) - 1) > len(new_lengths):
             raise ValueError(

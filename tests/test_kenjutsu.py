@@ -196,14 +196,6 @@ class TestKenjutsu(unittest.TestCase):
 
     def test_reformat_slices(self):
         with self.assertRaises(ValueError) as e:
-            kenjutsu.reformat_slices((slice(None),), (1, 2))
-
-        self.assertEqual(
-            str(e.exception),
-            "Shape must be the same as the number of slices."
-        )
-
-        with self.assertRaises(ValueError) as e:
             kenjutsu.reformat_slices(
                 (slice(None), slice(None), Ellipsis), (1,)
             )

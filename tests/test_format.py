@@ -270,11 +270,13 @@ class TestFormat(unittest.TestCase):
 
     def test_reformat_slices(self):
         with self.assertRaises(ValueError) as e:
-            format.reformat_slices((slice(None),), (1, 2))
+            format.reformat_slices(
+                (slice(None), slice(None)), (1,)
+            )
 
         self.assertEqual(
             str(e.exception),
-            "Shape must be the same as the number of slices."
+            "Shape must be as large or larger than the number of slices."
         )
 
         with self.assertRaises(ValueError) as e:
@@ -350,10 +352,22 @@ class TestFormat(unittest.TestCase):
             (slice(0, 10, 1),)
         )
 
+        rf_slice = format.reformat_slices(slice(None), (1, 2))
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 1, 1), slice(0, 2, 1))
+        )
+
         rf_slice = format.reformat_slices((slice(None),), 10)
         self.assertEqual(
             rf_slice,
             (slice(0, 10, 1),)
+        )
+
+        rf_slice = format.reformat_slices((slice(None),), (1, 2))
+        self.assertEqual(
+            rf_slice,
+            (slice(0, 1, 1), slice(0, 2, 1))
         )
 
         rf_slice = format.reformat_slices((
