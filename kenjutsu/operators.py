@@ -52,7 +52,7 @@ def join_slice(slice_1, slice_2, length=None):
         else:
             result_slice_stop = rf_slice_1.stop - rf_slice_2.stop
     else:
-        result_slice_start = rf_slice_1.start - rf_slice_2.start
+        result_slice_start = rf_slice_1.start - rf_slice_2.start + 2
         if rf_slice_1.stop is None:
             result_slice_stop = rf_slice_2.stop
         elif rf_slice_2.stop is None:

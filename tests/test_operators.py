@@ -46,6 +46,7 @@ class TestOperators(unittest.TestCase):
                         slice_2 = slice(start_2, stop_2, step_2)
 
                         j_slice = operators.join_slice(slice_1, slice_2)
+                        print((slice_1, slice_2, j_slice))
                         self.assertEqual(
                             each_range[slice_1][slice_2],
                             each_range[j_slice]
