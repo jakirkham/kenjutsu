@@ -72,6 +72,15 @@ class TestBlocks(unittest.TestCase):
             "Instead got: (1, -2)."
         )
 
+        with self.assertRaises(ValueError) as e:
+            blocks.split_blocks((1, 2), (1, 1), (0, -1))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the halo must all be positive semidefinite."
+            "Instead got: (0, -1)."
+        )
+
         result = blocks.split_blocks((2,), (1,))
         self.assertEqual(
             result,
