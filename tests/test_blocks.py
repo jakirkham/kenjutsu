@@ -26,6 +26,74 @@ class TestBlocks(unittest.TestCase):
         pass
 
 
+    def test_num_blocks(self):
+        with self.assertRaises(ValueError) as e:
+            blocks.num_blocks((1,), (1, 2))
+
+        self.assertEqual(
+            str(e.exception),
+            "The dimensions of `space_shape` and `block_shape` should be the"
+            " same."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            blocks.num_blocks((1, 0), (1, -1))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the space must all be positive definite."
+            "Instead got: (1, 0)."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            blocks.num_blocks((1, 2), (1, 0))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: (1, 0)."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            blocks.num_blocks((1, 2), (1, -2))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: (1, -2)."
+        )
+
+        result = blocks.num_blocks((2,), (1,))
+        self.assertEqual(
+            result,
+            (2,)
+        )
+
+        result = blocks.num_blocks((2,), (-1,))
+        self.assertEqual(
+            result,
+            (1,)
+        )
+
+        result = blocks.num_blocks((2, 3), (1, 1,))
+        self.assertEqual(
+            result,
+            (2, 3)
+        )
+
+        result = blocks.num_blocks((2, 3), (1, 2,))
+        self.assertEqual(
+            result,
+            (2, 2)
+        )
+
+        result = blocks.num_blocks((10, 12), (3, 2,))
+        self.assertEqual(
+            result,
+            (4, 6)
+        )
+
+
     def test_split_blocks(self):
         with self.assertRaises(ValueError) as e:
             blocks.split_blocks((1,), (1, 2), (1, 2, 3))
