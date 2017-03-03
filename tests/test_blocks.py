@@ -45,6 +45,15 @@ class TestBlocks(unittest.TestCase):
             " same."
         )
 
+        with self.assertRaises(ValueError) as e:
+            blocks.split_blocks((1, 0), (1, -1))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the space must all be positive definite."
+            "Instead got: (1, 0)."
+        )
+
         result = blocks.split_blocks((2,), (1,))
         self.assertEqual(
             result,
