@@ -97,6 +97,12 @@ def split_blocks(space_shape, block_shape, block_halo=None):
             "Instead got: %s." % str(space_shape)
         )
 
+    if not all(imap(lambda e: e > 0 or e == -1, block_shape)):
+        raise ValueError(
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: %s." % str(block_shape)
+        )
+
     vec_add = lambda a, b: imap(operator.add, a, b)
     vec_sub = lambda a, b: imap(operator.sub, a, b)
 

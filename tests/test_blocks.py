@@ -54,6 +54,24 @@ class TestBlocks(unittest.TestCase):
             "Instead got: (1, 0)."
         )
 
+        with self.assertRaises(ValueError) as e:
+            blocks.split_blocks((1, 2), (1, 0))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: (1, 0)."
+        )
+
+        with self.assertRaises(ValueError) as e:
+            blocks.split_blocks((1, 2), (1, -2))
+
+        self.assertEqual(
+            str(e.exception),
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: (1, -2)."
+        )
+
         result = blocks.split_blocks((2,), (1,))
         self.assertEqual(
             result,
