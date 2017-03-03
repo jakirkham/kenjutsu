@@ -12,7 +12,7 @@ import warnings
 import kenjutsu.format
 
 
-def split_blocks(space_shape, block_shape, block_halo=None):
+def split_blocks(space_shape, block_shape, block_halo=None, index=None):
     """
         Return a list of slicings to cut each block out of an array or other.
 
@@ -30,6 +30,8 @@ def split_blocks(space_shape, block_shape, block_halo=None):
             space_shape(tuple):            Shape of array to slice
             block_shape(tuple):            Size of each block to take
             block_halo(tuple):             Halo to tack on to each block
+            index(bool):                   Whether to provide an index for
+                                           each block
 
         Returns:
             collections.Sequence of \
@@ -39,9 +41,16 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         Examples:
 
             >>> split_blocks(
-            ...     (2, 3,), (1, 1,), (1, 1,)
+            ...     (2, 3,), (1, 1,), (1, 1,), True
             ... )  #doctest: +NORMALIZE_WHITESPACE
-            ([(slice(0, 1, 1), slice(0, 1, 1)),
+            ([(0, 0),
+              (0, 1),
+              (0, 2),
+              (1, 0),
+              (1, 1),
+              (1, 2)],
+            <BLANKLINE>
+             [(slice(0, 1, 1), slice(0, 1, 1)),
               (slice(0, 1, 1), slice(1, 2, 1)),
               (slice(0, 1, 1), slice(2, 3, 1)),
               (slice(1, 2, 1), slice(0, 1, 1)),
@@ -73,6 +82,19 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         from itertools import ifilter, imap
     except ImportError:
         ifilter, imap = filter, map
+
+    if index is None:
+        index = False
+        warnings.warn(
+            "`index` will default to `True` in the next minor release.",
+            FutureWarning
+        )
+    else:
+        warnings.warn(
+            "`index` will be deprecated in the next minor release. Once"
+            " removed, `split_blocks` will act as if `index` were `True`.",
+            PendingDeprecationWarning
+        )
 
     if block_halo is not None:
         if not (len(space_shape) == len(block_shape) == len(block_halo)):
@@ -200,8 +222,16 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         trimmed_halos_per_dim.append(a_trimmed_halo)
 
     # Take all combinations of all ranges to get blocks.
+    result = tuple()
+    if index:
+        index_blocks = imap(lambda e: irange(len(e)), ranges_per_dim)
+        index_blocks = list(itertools.product(*index_blocks))
+        result += (index_blocks,)
+
     orig_blocks = list(itertools.product(*ranges_per_dim))
     haloed_blocks = list(itertools.product(*haloed_ranges_per_dim))
     trimmed_halos = list(itertools.product(*trimmed_halos_per_dim))
 
-    return(orig_blocks, haloed_blocks, trimmed_halos)
+    result += (orig_blocks, haloed_blocks, trimmed_halos)
+
+    return result
