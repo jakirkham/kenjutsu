@@ -91,6 +91,24 @@ def split_blocks(space_shape, block_shape, block_halo=None):
         for i in irange(len(space_shape)):
             block_halo += (0,)
 
+    if not all(imap(lambda e: e > 0, space_shape)):
+        raise ValueError(
+            "Shape of the space must all be positive definite."
+            "Instead got: %s." % str(space_shape)
+        )
+
+    if not all(imap(lambda e: e > 0 or e == -1, block_shape)):
+        raise ValueError(
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: %s." % str(block_shape)
+        )
+
+    if not all(imap(lambda e: e >= 0, block_halo)):
+        raise ValueError(
+            "Shape of the halo must all be positive semidefinite."
+            "Instead got: %s." % str(block_halo)
+        )
+
     vec_add = lambda a, b: imap(operator.add, a, b)
     vec_sub = lambda a, b: imap(operator.sub, a, b)
 
