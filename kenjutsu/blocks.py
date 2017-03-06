@@ -6,10 +6,101 @@ __date__ = "$Dec 08, 2016 15:26:16 GMT-0500$"
 
 
 import itertools
+import math
 import operator
 import warnings
 
 import kenjutsu.format
+
+
+def num_blocks(space_shape, block_shape):
+    """
+        Computes the number of blocks.
+
+        Takes an array with ``space_shape`` and ``block_shape`` for every
+        dimension. From this, it can compute slicings to use for cutting
+        each block out from the original array, HDF5 dataset, or other.
+
+
+        Args:
+            space_shape(tuple):            Shape of array to slice
+            block_shape(tuple):            Size of each block to take
+
+        Returns:
+            tuple:                         Number of blocks per dimension
+
+        Examples:
+
+            >>> num_blocks(
+            ...     (2, 3,), (2, 1,)
+            ... )  #doctest: +NORMALIZE_WHITESPACE
+            (1, 3)
+
+    """
+
+    try:
+        irange = xrange
+    except NameError:
+        irange = range
+
+    try:
+        from itertools import ifilter, imap
+    except ImportError:
+        ifilter, imap = filter, map
+
+    if not (len(space_shape) == len(block_shape)):
+        raise ValueError(
+            "The dimensions of `space_shape` and `block_shape` should be"
+            " the same."
+        )
+
+    if not all(imap(lambda e: e > 0, space_shape)):
+        raise ValueError(
+            "Shape of the space must all be positive definite."
+            "Instead got: %s." % str(space_shape)
+        )
+
+    if not all(imap(lambda e: e > 0 or e == -1, block_shape)):
+        raise ValueError(
+            "Shape of the blocks must all be positive or -1."
+            "Instead got: %s." % str(block_shape)
+        )
+
+    vec_type = lambda t, a: imap(t, a)
+
+    vec_ceil = lambda a: imap(math.ceil, a)
+
+    vec_div = lambda a, b: imap(operator.truediv, a, b)
+    vec_mod = lambda a, b: imap(operator.mod, a, b)
+
+    vec_nonzero = lambda a: \
+            imap(lambda _: _[0], ifilter(lambda _: _[1], enumerate(a)))
+    vec_str = lambda a: imap(str, a)
+
+    uneven_block_division = tuple(vec_mod(space_shape, block_shape))
+
+    if any(uneven_block_division):
+        uneven_block_division_str = vec_nonzero(uneven_block_division)
+        uneven_block_division_str = vec_str(uneven_block_division_str)
+        uneven_block_division_str = ", ".join(uneven_block_division_str)
+
+        warnings.warn(
+            "Blocks will not evenly divide the array." +
+            " The following dimensions will be unevenly divided: %s." %
+            uneven_block_division_str,
+            RuntimeWarning
+        )
+
+    for each_dim in irange(len(space_shape)):
+        # Construct each block using the block size given. Allow to spill over.
+        if block_shape[each_dim] == -1:
+            block_shape = (block_shape[:each_dim] +
+                           space_shape[each_dim:each_dim+1] +
+                           block_shape[each_dim+1:])
+
+    n_blocks = vec_type(int, vec_ceil(vec_div(space_shape, block_shape)))
+
+    return tuple(n_blocks)
 
 
 def split_blocks(space_shape, block_shape, block_halo=None, index=None):
