@@ -6,6 +6,9 @@ kenjutsu
 .. image:: https://img.shields.io/pypi/v/kenjutsu.svg
         :target: https://pypi.python.org/pypi/kenjutsu
 
+.. image:: https://anaconda.org/conda-forge/kenjutsu/badges/version.svg
+        :target: https://anaconda.org/conda-forge/kenjutsu
+
 .. image:: https://img.shields.io/travis/jakirkham/kenjutsu/master.svg
         :target: https://travis-ci.org/jakirkham/kenjutsu
 
