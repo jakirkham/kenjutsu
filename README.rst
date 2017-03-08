@@ -5,16 +5,19 @@ kenjutsu
 
 .. image:: https://img.shields.io/pypi/v/kenjutsu.svg
         :target: https://pypi.python.org/pypi/kenjutsu
+        :alt: PyPI
 
 .. image:: https://anaconda.org/conda-forge/kenjutsu/badges/version.svg
         :target: https://anaconda.org/conda-forge/kenjutsu
+        :alt: conda-forge
 
 .. image:: https://img.shields.io/travis/jakirkham/kenjutsu/master.svg
         :target: https://travis-ci.org/jakirkham/kenjutsu
+        :alt: Travis CI
 
 .. image:: https://readthedocs.org/projects/kenjutsu/badge/?version=latest
         :target: https://kenjutsu.readthedocs.io/en/latest/?badge=latest
-        :alt: Documentation Status
+        :alt: Read the Docs
 
 .. image:: https://coveralls.io/repos/github/jakirkham/kenjutsu/badge.svg
         :target: https://coveralls.io/github/jakirkham/kenjutsu
