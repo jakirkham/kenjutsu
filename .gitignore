@@ -58,3 +58,6 @@ docs/kenjutsu*.rst
 
 # PyBuilder
 target/
+
+# pyenv python configuration file
+.python-version
